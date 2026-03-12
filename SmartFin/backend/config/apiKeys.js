@@ -1,0 +1,6 @@
+module.exports = {
+
+ALPHA_VANTAGE_KEY:"YOUR_API_KEY",
+GOV_API_KEY:"YOUR_API_KEY"
+
+};
