@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bharat Financial Planner</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Bharat Financial Planner</h1>
+    <nav>
+      <ul>
+        <li><a href="#" onclick="showTransactions()">Income & Expense</a></li>
+        <li><a href="#" onclick="showInvestments()">Investment</a></li>
+        <li><a href="#" onclick="showPolicies()">Insurance</a></li>
+        <li><a href="#" onclick="showTax(600000)">Taxation</a></li>
+        <li><a href="#" onclick="showLoan(500000,8,120)">Loan Planning</a></li>
+        <li><a href="#" onclick="showAssets()">Estate Management</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="content">
+    <h2>Welcome</h2>
+    <p>Select a module from the navigation above to manage your finances.</p>
+
+    <!-- Income & Expense Form -->
+    <section id="incomeExpenseForm">
+      <h3>Add Transaction</h3>
+      <form onsubmit="addTransaction(
+          document.getElementById('type').value,
+          parseFloat(document.getElementById('amount').value),
+          document.getElementById('category').value
+        ); showTransactions(); return false;">
+        <label>Type:
+          <select id="type">
+            <option value="Income">Income</option>
+            <option value="Expense">Expense</option>
+          </select>
+        </label><br>
+        <label>Amount: <input type="number" id="amount" required></label><br>
+        <label>Category: <input type="text" id="category" required></label><br>
+        <button type="submit">Add</button>
+      </form>
+    </section>
+
+    <!-- Investment Form -->
+    <section id="investmentForm">
+      <h3>Add Investment</h3>
+      <form onsubmit="addInvestment(
+          document.getElementById('invType').value,
+          parseFloat(document.getElementById('invAmount').value),
+          parseFloat(document.getElementById('invRate').value),
+          parseInt(document.getElementById('invYears').value)
+        ); showInvestments(); return false;">
+        <label>Type: <input type="text" id="invType" required></label><br>
+        <label>Amount: <input type="number" id="invAmount" required></label><br>
+        <label>Rate (%): <input type="number" id="invRate" required></label><br>
+        <label>Years: <input type="number" id="invYears" required></label><br>
+        <button type="submit">Add</button>
+      </form>
+    </section>
+
+    <!-- Insurance Form -->
+    <section id="insuranceForm">
+      <h3>Add Insurance Policy</h3>
+      <form onsubmit="addPolicy(
+          document.getElementById('policyType').value,
+          parseFloat(document.getElementById('premium').value),
+          parseFloat(document.getElementById('coverage').value),
+          document.getElementById('renewalDate').value
+        ); showPolicies(); return false;">
+        <label>Type: <input type="text" id="policyType" required></label><br>
+        <label>Premium: <input type="number" id="premium" required></label><br>
+        <label>Coverage: <input type="number" id="coverage" required></label><br>
+        <label>Renewal Date: <input type="date" id="renewalDate" required></label><br>
+        <button type="submit">Add</button>
+      </form>
+    </section>
+
+    <!-- Loan Form -->
+    <section id="loanForm">
+      <h3>Loan Calculator</h3>
+      <form onsubmit="showLoan(
+          parseFloat(document.getElementById('loanAmount').value),
+          parseFloat(document.getElementById('loanRate').value),
+          parseInt(document.getElementById('loanMonths').value)
+        ); return false;">
+        <label>Loan Amount: <input type="number" id="loanAmount" required></label><br>
+        <label>Rate (%): <input type="number" id="loanRate" required></label><br>
+        <label>Months: <input type="number" id="loanMonths" required></label><br>
+        <button type="submit">Calculate EMI</button>
+      </form>
+    </section>
+
+    <!-- Estate Form -->
+    <section id="estateForm">
+      <h3>Add Asset</h3>
+      <form onsubmit="addAsset(
+          document.getElementById('assetType').value,
+          parseFloat(document.getElementById('assetValue').value),
+          document.getElementById('nominee').value
+        ); showAssets(); return false;">
+        <label>Asset Type: <input type="text" id="assetType" required></label><br>
+        <label>Value: <input type="number" id="assetValue" required></label><br>
+        <label>Nominee: <input type="text" id="nominee" required></label><br>
+        <button type="submit">Add</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Load JS files -->
+  <script src="js/app.js"></script>
+  <script src="js/incomeExpense.js"></script>
+  <script src="js/investment.js"></script>
+  <script src="js/insurance.js"></script>
+  <script src="js/tax.js"></script>
+  <script src="js/loan.js"></script>
+  <script src="js/estate.js"></script>
+</body>
+</html>
