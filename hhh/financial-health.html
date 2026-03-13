@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Financial Health Score</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+<h2>Financial Health Score Analysis</h2>
+<p>Generate your financial health report after completing all financial services.</p>
+
+<div class="score-container">
+
+<div class="circle">
+<span id="scoreValue">0</span>
+</div>
+
+</div>
+
+<br>
+
+<button onclick="generateScore()">Generate Score</button>
+
+<h3 id="status"></h3>
+<p id="suggestion"></p>
+
+<script src="health.js"></script>
+<button onclick="window.location.href='dashboard.html'">back to dashboard</button>
+</body>
+</html>

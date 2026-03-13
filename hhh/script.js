@@ -78,3 +78,6 @@ slideIndex = 2;
 }
 showSlide();
 }
+function openPage(page){
+window.location.href = page;
+}
