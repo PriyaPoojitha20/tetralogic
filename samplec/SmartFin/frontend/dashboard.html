@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartFin – Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a class="navbar-brand" href="dashboard.html">💰 SmartFin</a>
+  <div class="navbar-links">
+    <a href="pages/income-expense.html">Income</a>
+    <a href="pages/investments.html">Investments</a>
+    <a href="pages/loans.html">Loans</a>
+    <a href="pages/tax.html">Tax</a>
+    <a href="pages/insurance.html">Insurance</a>
+    <a href="pages/assets.html">Assets</a>
+    <a href="pages/estate.html">Estate</a>
+    <a href="pages/health-score.html">Health Score</a>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<!-- Ticker -->
+<div class="ticker">
+  <span class="ticker-text">
+    Welcome to SmartFin 🚀 &nbsp;|&nbsp; Reduce unnecessary tax payments &nbsp;|&nbsp;
+    Discover government schemes &nbsp;|&nbsp; Plan investments smartly &nbsp;|&nbsp;
+    Track income &amp; expenses in real-time &nbsp;|&nbsp; Calculate your Financial Health Score 💡
+  </span>
+</div>
+
+<!-- Hero Slider -->
+<div class="hero-slider">
+  <div class="hero-slides" id="heroSlides">
+    <div class="hero-slide">
+      <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200" alt="Tax Analysis">
+      <div class="hero-slide-caption">Smart Tax Analysis</div>
+    </div>
+    <div class="hero-slide">
+      <img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?w=1200" alt="Financial Planning">
+      <div class="hero-slide-caption">Financial Planning</div>
+    </div>
+    <div class="hero-slide">
+      <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=1200" alt="Investment Opportunities">
+      <div class="hero-slide-caption">Investment Opportunities</div>
+    </div>
+  </div>
+  <button class="slider-arrow prev" id="heroPrev">&#8249;</button>
+  <button class="slider-arrow next" id="heroNext">&#8250;</button>
+</div>
+
+<!-- Platform Insights Slider -->
+<div class="info-slider-wrap">
+  <h2>SmartFin Platform Insights</h2>
+  <div style="overflow:hidden;">
+    <div class="info-track" id="infoTrack">
+      <div class="info-card">
+        <h3>💰 Smart Tax Detection</h3>
+        <p>Automatically detect unnecessary tax payments by analyzing your income and deductions using real Indian tax slabs.</p>
+      </div>
+      <div class="info-card">
+        <h3>📊 Financial Analysis</h3>
+        <p>Get clear insights about salary structure, deductions, and tax liabilities with a simplified dashboard view.</p>
+      </div>
+      <div class="info-card">
+        <h3>🏦 Loan & Insurance Benefits</h3>
+        <p>Discover tax benefits available through education loans, home loans and insurance policies under Section 80C & 80D.</p>
+      </div>
+      <div class="info-card">
+        <h3>🏛 Government Schemes</h3>
+        <p>Find schemes like PPF, NPS and ELSS that help you legally reduce tax and maximize long-term savings.</p>
+      </div>
+      <div class="info-card">
+        <h3>📈 Investment Planning</h3>
+        <p>Learn about ELSS, PPF and NPS investment opportunities tailored to your risk appetite and savings goals.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats Row -->
+<div class="stats-row">
+  <div class="stat-card">
+    <h5>Total Income</h5>
+    <h3 id="statIncome">₹0</h3>
+  </div>
+  <div class="stat-card">
+    <h5>Total Expenses</h5>
+    <h3 id="statExpenses">₹0</h3>
+  </div>
+  <div class="stat-card">
+    <h5>Net Savings</h5>
+    <h3 id="statSavings">₹0</h3>
+  </div>
+  <div class="stat-card">
+    <h5>Latest EMI</h5>
+    <h3 id="statEMI">₹0</h3>
+  </div>
+</div>
+
+<!-- Chart -->
+<div class="chart-wrap" style="margin-top:40px;">
+  <h4>Income vs Expenses</h4>
+  <canvas id="financeChart"></canvas>
+</div>
+
+<!-- Feature Cards -->
+<div class="section">
+  <h2 class="section-title">Financial Services</h2>
+  <div class="cards-row">
+
+    <div class="feature-card">
+      <img src="https://images.unsplash.com/photo-1554224154-22dec7ec8818?w=400" alt="Income">
+      <h3>Income & Expense</h3>
+      <p>Track salary, spending and manage your financial flow efficiently.</p>
+      <a href="pages/income-expense.html" class="card-btn">Open →</a>
+    </div>
+
+    <div class="feature-card">
+      <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400" alt="Investment">
+      <h3>Investment Planner</h3>
+      <p>Discover smart investment options and grow your wealth based on risk level.</p>
+      <a href="pages/investments.html" class="card-btn">Open →</a>
+    </div>
+
+    <div class="feature-card">
+      <img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?w=400" alt="Loans">
+      <h3>Loans & EMI</h3>
+      <p>Analyze loan details, calculate EMI and discover tax deductions.</p>
+      <a href="pages/loans.html" class="card-btn">Open →</a>
+    </div>
+
+    <div class="feature-card">
+      <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400" alt="Tax">
+      <h3>Tax Calculator</h3>
+      <p>Calculate tax liability with Indian slabs and find saving opportunities.</p>
+      <a href="pages/tax.html" class="card-btn">Open →</a>
+    </div>
+
+    <div class="feature-card">
+      <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400" alt="Estate">
+      <h3>Estate & Will</h3>
+      <p>Plan your estate and secure financial assets for the future.</p>
+      <a href="pages/estate.html" class="card-btn">Open →</a>
+    </div>
+
+    <div class="feature-card">
+      <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=400" alt="Insurance">
+      <h3>Insurance</h3>
+      <p>Explore insurance plans and protect your health and finances.</p>
+      <a href="pages/insurance.html" class="card-btn">Open →</a>
+    </div>
+
+    <div class="feature-card">
+      <img src="https://images.unsplash.com/photo-1554224154-22dec7ec8818?w=400" alt="Assets">
+      <h3>Asset Tracker</h3>
+      <p>Track gold, property, stocks and all your valuable assets in one place.</p>
+      <a href="pages/assets.html" class="card-btn">Open →</a>
+    </div>
+
+    <div class="feature-card">
+      <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400" alt="Health Score">
+      <h3>Financial Health Score</h3>
+      <p>Generate your overall financial health report across all 6 parameters.</p>
+      <a href="pages/health-score.html" class="card-btn">Open →</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- How it Works -->
+<div class="how-section">
+  <h2>How SmartFin Works</h2>
+  <ul>
+    <li>Enter your financial details across all modules</li>
+    <li>AI-powered analysis detects your tax structure and savings gaps</li>
+    <li>Discover excess tax payments and legal saving schemes</li>
+    <li>Get a complete Financial Health Score based on 6 key parameters</li>
+  </ul>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

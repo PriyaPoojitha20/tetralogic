@@ -1,0 +1,355 @@
+/* =========================================================
+   SmartFin - Unified Stylesheet
+   ========================================================= */
+
+/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  color: #333;
+}
+
+/* ── Navbar ── */
+.navbar {
+  background: #1a1a2e;
+  padding: 14px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-brand {
+  font-size: 22px;
+  font-weight: 700;
+  color: #4ecca3;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+.navbar-links a {
+  color: #ccc;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.navbar-links a:hover { color: #4ecca3; }
+
+.navbar-links .btn-logout {
+  background: #e74c3c;
+  color: white;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  margin-left: 20px;
+}
+
+/* ── Announcement Ticker ── */
+.ticker {
+  background: linear-gradient(90deg, #141e30, #243b55);
+  color: white;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 10px 0;
+}
+
+.ticker-text {
+  display: inline-block;
+  animation: ticker 25s linear infinite;
+}
+
+@keyframes ticker {
+  from { transform: translateX(100vw); }
+  to   { transform: translateX(-100%); }
+}
+
+/* ── Hero Slider ── */
+.hero-slider {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  overflow: hidden;
+}
+
+.hero-slides { display: flex; transition: transform 0.6s ease; height: 100%; }
+
+.hero-slide {
+  min-width: 100%;
+  position: relative;
+}
+
+.hero-slide img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.hero-slide-caption {
+  position: absolute;
+  bottom: 40px; left: 50px;
+  color: white;
+  font-size: 26px;
+  font-weight: bold;
+  background: rgba(0,0,0,0.55);
+  padding: 10px 22px;
+  border-radius: 6px;
+}
+
+.slider-arrow {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  background: rgba(0,0,0,0.45);
+  color: white; border: none;
+  font-size: 26px; padding: 10px 16px;
+  cursor: pointer; z-index: 10;
+  transition: background 0.2s;
+}
+
+.slider-arrow:hover { background: rgba(0,0,0,0.75); }
+.slider-arrow.prev { left: 0; }
+.slider-arrow.next { right: 0; }
+
+/* ── Info Ticker Cards ── */
+.info-slider-wrap {
+  width: 90%; margin: 50px auto; overflow: hidden;
+}
+
+.info-slider-wrap h2 { text-align: center; margin-bottom: 25px; color: #2c3e50; font-size: 26px; }
+
+.info-track { display: flex; transition: transform 0.7s ease; }
+
+.info-card {
+  min-width: 100%;
+  background: white;
+  border-radius: 14px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.09);
+}
+
+.info-card h3 { font-size: 22px; margin-bottom: 12px; color: #2c3e50; }
+.info-card p  { font-size: 15px; color: #555; max-width: 680px; margin: auto; }
+
+/* ── Feature Cards ── */
+.section { padding: 55px 40px; }
+.section-title { text-align: center; font-size: 30px; color: #2c3e50; margin-bottom: 35px; font-weight: 700; }
+
+.cards-row {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scroll-behavior: smooth;
+}
+
+.cards-row::-webkit-scrollbar { display: none; }
+
+.feature-card {
+  min-width: 270px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.09);
+  padding: 22px;
+  text-align: center;
+  transition: transform 0.25s;
+  flex-shrink: 0;
+}
+
+.feature-card:hover { transform: translateY(-8px); }
+
+.feature-card img {
+  width: 100%; height: 155px; object-fit: cover;
+  border-radius: 10px;
+}
+
+.feature-card h3 { margin-top: 14px; color: #2c3e50; font-size: 17px; }
+.feature-card p  { font-size: 13px; color: #666; margin: 9px 0 14px; }
+
+.feature-card .card-btn {
+  background: linear-gradient(135deg, #27ae60, #1a6e3c);
+  color: white; border: none;
+  padding: 10px 20px; border-radius: 7px;
+  cursor: pointer; font-weight: 600;
+  font-size: 13px; transition: opacity 0.2s;
+  text-decoration: none; display: inline-block;
+}
+
+.feature-card .card-btn:hover { opacity: 0.88; }
+
+/* ── Stat Cards (Dashboard) ── */
+.stats-row {
+  display: flex; gap: 22px; flex-wrap: wrap;
+  padding: 30px 40px 0;
+}
+
+.stat-card {
+  flex: 1; min-width: 180px;
+  background: white;
+  border-radius: 12px;
+  padding: 22px 26px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.stat-card h5 { font-size: 14px; color: #888; margin-bottom: 8px; }
+.stat-card h3 { font-size: 26px; font-weight: 700; color: #0d6efd; }
+
+/* ── Chart ── */
+.chart-wrap {
+  max-width: 580px; margin: 40px auto; padding: 0 20px;
+  text-align: center;
+}
+
+.chart-wrap h4 { font-size: 20px; color: #2c3e50; margin-bottom: 20px; }
+
+canvas { max-width: 100%; display: block; margin: auto; }
+
+/* ── Page Layout (inner pages) ── */
+.page-wrap {
+  max-width: 600px;
+  margin: 50px auto 80px;
+  background: white;
+  border-radius: 14px;
+  padding: 36px 40px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.09);
+}
+
+.page-wrap h2 {
+  font-size: 24px; color: #1a1a2e;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+/* ── Forms ── */
+.form-group { margin-bottom: 18px; }
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #444;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fafafa;
+  transition: border 0.2s;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #4ecca3;
+  background: #fff;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-block;
+  padding: 11px 22px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  text-decoration: none;
+  text-align: center;
+}
+
+.btn:hover { opacity: 0.88; transform: scale(1.02); }
+
+.btn-primary  { background: linear-gradient(135deg, #0d6efd, #084298); color: white; }
+.btn-success  { background: linear-gradient(135deg, #27ae60, #145a32); color: white; }
+.btn-warning  { background: linear-gradient(135deg, #f39c12, #9a6200); color: white; }
+.btn-back     { background: #95a5a6; color: white; margin-top: 12px; }
+.btn-full     { width: 100%; display: block; }
+.btn-health   { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; }
+
+/* ── Result Box ── */
+.result-box {
+  margin-top: 22px;
+  padding: 16px 20px;
+  background: #ecfdf5;
+  border-left: 4px solid #27ae60;
+  border-radius: 8px;
+  color: #155724;
+  font-size: 15px;
+  display: none;
+}
+
+.result-box.error {
+  background: #fef2f2;
+  border-color: #e74c3c;
+  color: #7b1f1f;
+}
+
+.result-box p { margin-bottom: 6px; }
+.result-box p:last-child { margin: 0; }
+
+/* ── Health Score Circle ── */
+.score-wrap {
+  display: flex; flex-direction: column;
+  align-items: center; margin: 30px 0 20px;
+}
+
+.score-circle {
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: conic-gradient(#4ecca3 0deg, #e0e0e0 0deg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 38px; font-weight: 700; color: #1a1a2e;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  transition: background 0.5s;
+}
+
+#scoreStatus     { margin-top: 18px; font-size: 20px; font-weight: 700; color: #2c3e50; }
+#scoreSuggestion { margin-top: 8px; color: #666; font-size: 14px; text-align: center; max-width: 420px; }
+
+/* ── How it Works ── */
+.how-section {
+  background: white;
+  margin: 0 40px 50px;
+  border-radius: 14px;
+  padding: 32px 40px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+}
+
+.how-section h2 { font-size: 22px; color: #2c3e50; margin-bottom: 16px; }
+.how-section ul  { padding-left: 20px; }
+.how-section li  { margin: 8px 0; color: #555; }
+
+/* ── Login page ── */
+.login-wrap {
+  max-width: 360px; margin: 90px auto;
+  background: white;
+  border-radius: 14px;
+  padding: 38px 40px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.login-wrap h1 { font-size: 26px; color: #1a1a2e; margin-bottom: 6px; }
+.login-wrap p  { color: #888; margin-bottom: 24px; font-size: 14px; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .stats-row { flex-direction: column; }
+  .section   { padding: 40px 20px; }
+  .page-wrap { margin: 30px 16px; padding: 24px 22px; }
+  .hero-slider { height: 220px; }
+  .hero-slide-caption { font-size: 16px; left: 20px; bottom: 20px; }
+}

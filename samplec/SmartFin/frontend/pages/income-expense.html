@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartFin – Income & Expenses</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="navbar-brand" href="../dashboard.html">💰 SmartFin</a>
+  <div class="navbar-links">
+    <a href="../dashboard.html">← Dashboard</a>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <h2>📊 Income & Expense Tracker</h2>
+
+  <div class="form-group">
+    <label for="type">Type</label>
+    <select id="type">
+      <option value="Income">Income</option>
+      <option value="Expense">Expense</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="amount">Amount (₹)</label>
+    <input type="number" id="amount" placeholder="e.g. 50000" min="0">
+  </div>
+
+  <div class="form-group">
+    <label for="category">Category</label>
+    <input type="text" id="category" placeholder="e.g. Salary, Rent, Food">
+  </div>
+
+  <div class="form-group">
+    <label for="salary">Monthly Salary (for savings calculation)</label>
+    <input type="number" id="salary" placeholder="e.g. 60000">
+  </div>
+
+  <div class="form-group">
+    <label for="otherIncome">Other Income (₹)</label>
+    <input type="number" id="otherIncome" placeholder="e.g. 5000">
+  </div>
+
+  <div class="form-group">
+    <label for="expense">Monthly Expenses (₹)</label>
+    <input type="number" id="expense" placeholder="e.g. 30000">
+  </div>
+
+  <button class="btn btn-success btn-full" onclick="addTransaction()">Add Transaction</button>
+  <button class="btn btn-primary btn-full" style="margin-top:10px;" onclick="calculateSavings()">Calculate Savings</button>
+
+  <div id="result" class="result-box"></div>
+
+  <a href="../dashboard.html" class="btn btn-back btn-full">← Back to Dashboard</a>
+</div>
+
+<script src="../js/main.js"></script>
+<script src="../js/incomeExpense.js"></script>
+</body>
+</html>

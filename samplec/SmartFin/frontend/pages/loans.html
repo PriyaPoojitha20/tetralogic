@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartFin – Loan & EMI</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="navbar-brand" href="../dashboard.html">💰 SmartFin</a>
+  <div class="navbar-links">
+    <a href="../dashboard.html">← Dashboard</a>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <h2>🏦 Loan & EMI Calculator</h2>
+
+  <div class="form-group">
+    <label for="loanType">Loan Type</label>
+    <input type="text" id="loanType" placeholder="e.g. Home Loan, Car Loan, Education Loan">
+  </div>
+
+  <div class="form-group">
+    <label for="loanAmount">Loan Amount (₹)</label>
+    <input type="number" id="loanAmount" placeholder="e.g. 2000000" min="0">
+  </div>
+
+  <div class="form-group">
+    <label for="interestRate">Annual Interest Rate (%)</label>
+    <input type="number" id="interestRate" placeholder="e.g. 8.5" min="0" step="0.1">
+  </div>
+
+  <div class="form-group">
+    <label for="tenure">Loan Tenure (Months)</label>
+    <input type="number" id="tenure" placeholder="e.g. 240 (20 years)" min="1">
+  </div>
+
+  <button class="btn btn-success btn-full" onclick="calculateEMI()">Calculate EMI</button>
+
+  <div id="result" class="result-box"></div>
+
+  <a href="../dashboard.html" class="btn btn-back btn-full">← Back to Dashboard</a>
+</div>
+
+<script src="../js/main.js"></script>
+<script src="../js/loans.js"></script>
+</body>
+</html>

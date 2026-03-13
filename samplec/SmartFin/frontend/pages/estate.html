@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartFin – Estate & Will</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="navbar-brand" href="../dashboard.html">💰 SmartFin</a>
+  <div class="navbar-links">
+    <a href="../dashboard.html">← Dashboard</a>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <h2>🏠 Estate Planning</h2>
+
+  <div class="form-group">
+    <label for="totalAssets">Total Assets Value (₹)</label>
+    <input type="number" id="totalAssets" placeholder="e.g. 5000000" min="0">
+  </div>
+
+  <div class="form-group">
+    <label for="propertyValue">Property Value (₹)</label>
+    <input type="number" id="propertyValue" placeholder="e.g. 3000000" min="0">
+  </div>
+
+  <div class="form-group">
+    <label for="totalLiabilities">Total Liabilities / Debts (₹)</label>
+    <input type="number" id="totalLiabilities" placeholder="e.g. 1000000" min="0">
+  </div>
+
+  <div class="form-group">
+    <label for="nomineeName">Nominee Name</label>
+    <input type="text" id="nomineeName" placeholder="e.g. Priya Sharma">
+  </div>
+
+  <div class="form-group">
+    <label for="relationship">Relationship with Nominee</label>
+    <input type="text" id="relationship" placeholder="e.g. Spouse, Son, Daughter">
+  </div>
+
+  <button class="btn btn-primary btn-full" onclick="generateEstatePlan()">Generate Estate Plan</button>
+
+  <div id="result" class="result-box"></div>
+
+  <a href="../dashboard.html" class="btn btn-back btn-full">← Back to Dashboard</a>
+</div>
+
+<script src="../js/main.js"></script>
+<script src="../js/estate.js"></script>
+</body>
+</html>

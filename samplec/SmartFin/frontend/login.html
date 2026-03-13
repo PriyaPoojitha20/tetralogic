@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartFin – Login</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="navbar-brand" href="index.html">💰 SmartFin</a>
+</nav>
+
+<div class="login-wrap">
+  <h1>SmartFin</h1>
+  <p>Optimize your finances intelligently</p>
+
+  <form onsubmit="loginUser(event)">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="you@example.com" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="••••••••" required>
+    </div>
+    <button type="submit" class="btn btn-primary btn-full">Login →</button>
+  </form>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
