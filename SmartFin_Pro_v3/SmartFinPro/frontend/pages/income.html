@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartFin Pro — Income & Expenses</title>
+<link rel="stylesheet" href="../css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<nav class="navbar">
+  <a class="brand" href="../dashboard.html"><div class="brand-icon">💰</div><span class="brand-name">SmartFin<span>Pro</span></span></a>
+  <div class="nav-links">
+    <a href="../dashboard.html">Dashboard</a>
+    <a href="income.html" class="active">Income</a>
+    <a href="tax.html">Tax</a><a href="loans.html">Loans</a>
+    <a href="insurance.html">Insurance</a><a href="investments.html">Investments</a>
+    <a href="assets.html">Assets</a><a href="returns.html">Returns</a>
+    <a href="schemes.html">Gov Schemes</a><a href="health.html">Health Score</a>
+    <button class="btn-nav-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="breadcrumb"><a href="../dashboard.html">Dashboard</a> › Income & Expenses</div>
+  <div class="page-header">
+    <h1>💵 Income & Expense Manager</h1>
+    <p>Track all income sources and expenses. Savings = Income − Expenses. Auto-tagged with tax sections.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card g"><div class="stat-icon">💰</div><div class="stat-val" id="sInc">₹0</div><div class="stat-lbl">Total Income</div></div>
+    <div class="stat-card r"><div class="stat-icon">💸</div><div class="stat-val" id="sExp">₹0</div><div class="stat-lbl">Total Expenses</div></div>
+    <div class="stat-card t"><div class="stat-icon">🏦</div><div class="stat-val" id="sSav">₹0</div><div class="stat-lbl">Net Savings</div></div>
+    <div class="stat-card y"><div class="stat-icon">📊</div><div class="stat-val" id="sRate">0%</div><div class="stat-lbl">Savings Rate</div></div>
+    <div class="stat-card p"><div class="stat-icon">🔖</div><div class="stat-val" id="sDed">₹0</div><div class="stat-lbl">Tax Deductions</div></div>
+  </div>
+
+  <div class="sidebar-l">
+    <!-- LEFT: FORMS -->
+    <div>
+      <!-- ADD INCOME -->
+      <div class="card mb16">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">➕</div>Add Income</div></div>
+        <div class="form-grid">
+          <div class="fg"><label>Source</label><input id="iSrc" placeholder="e.g. Salary, Freelancing"></div>
+          <div class="fg"><label>Category</label>
+            <select id="iCat">
+              <option>Employment</option><option>Business</option><option>Freelance</option>
+              <option>Rental</option><option>Investment</option><option>Pension</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fg"><label>Amount (₹/month)</label><input id="iAmt" type="number" placeholder="85000"></div>
+          <div class="fg"><label>Frequency</label>
+            <select id="iFreq"><option>Monthly</option><option>Quarterly</option><option>Annual</option><option>One-time</option></select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="addIncome()">+ Add Income Source</button>
+      </div>
+
+      <!-- ADD EXPENSE -->
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">➖</div>Add Expense</div></div>
+        <div class="form-grid">
+          <div class="fg"><label>Description</label><input id="eDesc" placeholder="e.g. LIC Premium"></div>
+          <div class="fg"><label>Category</label>
+            <select id="eCat">
+              <option>Housing</option><option>Food</option><option>Transport</option>
+              <option>Insurance</option><option>Loan EMI</option><option>Investment</option>
+              <option>Utilities</option><option>Healthcare</option><option>Education</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fg"><label>Amount (₹/month)</label><input id="eAmt" type="number" placeholder="5000"></div>
+          <div class="fg"><label>Tax Section</label>
+            <select id="eSec">
+              <option value="">None</option><option>80C</option><option>80D</option>
+              <option>80E</option><option>80G</option><option>24B</option><option>80CCD</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="background:linear-gradient(135deg,#ff5d73,#c0132d)" onclick="addExpense()">+ Add Expense</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: CHARTS + TABLES -->
+    <div>
+      <div class="card mb16">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">📊</div>Income vs Expenses</div></div>
+        <canvas id="barChart" height="160"></canvas>
+      </div>
+
+      <!-- INCOME TABLE -->
+      <div class="card mb16">
+        <div class="card-hd">
+          <div class="card-title"><div class="card-icon">💰</div>Income Sources</div>
+          <span class="badge badge-g" id="incCount">0 entries</span>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Source</th><th>Category</th><th>Frequency</th><th>Monthly ₹</th><th>Annual ₹</th><th></th></tr></thead>
+          <tbody id="incomeTable"><tr><td colspan="6" style="text-align:center;color:var(--text-3);padding:24px">No income added yet</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- EXPENSE TABLE -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><div class="card-icon">💸</div>Expense Entries</div>
+          <span class="badge badge-r" id="expCount">0 entries</span>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Description</th><th>Category</th><th>Monthly ₹</th><th>Tax Section</th><th>Deductible ₹</th><th></th></tr></thead>
+          <tbody id="expenseTable"><tr><td colspan="6" style="text-align:center;color:var(--text-3);padding:24px">No expenses added yet</td></tr></tbody>
+          </table>
+        </div>
+
+        <!-- DEDUCTIONS SUMMARY -->
+        <div id="dedSection" style="display:none;margin-top:18px">
+          <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px">Tax Deduction Summary</div>
+          <div class="ded-list" id="dedList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">SmartFin Pro v3.0 — FY 2024-25</footer>
+<script src="../js/main.js"></script>
+<script>
+let income=load("incomeList",[]);
+let expenses=load("expenseList",[]);
+let chart;
+
+const SEC_CAPS={
+  "80C":150000,"80D":25000,"80E":Infinity,
+  "80G":Infinity,"24B":200000,"80CCD":50000
+};
+
+function calcMonthly(amt,freq){
+  return freq==="Quarterly"?amt/3:freq==="Annual"?amt/12:freq==="One-time"?amt/12:amt;
+}
+
+function addIncome(){
+  const src=document.getElementById("iSrc").value.trim();
+  const cat=document.getElementById("iCat").value;
+  const amt=parseFloat(document.getElementById("iAmt").value)||0;
+  const freq=document.getElementById("iFreq").value;
+  if(!src||!amt)return alert("Enter source and amount.");
+  income.push({src,cat,amt,freq,id:Date.now()});
+  save("incomeList",income);
+  document.getElementById("iSrc").value="";
+  document.getElementById("iAmt").value="";
+  render();
+}
+
+function addExpense(){
+  const desc=document.getElementById("eDesc").value.trim();
+  const cat=document.getElementById("eCat").value;
+  const amt=parseFloat(document.getElementById("eAmt").value)||0;
+  const sec=document.getElementById("eSec").value;
+  if(!desc||!amt)return alert("Enter description and amount.");
+  expenses.push({desc,cat,amt,sec,id:Date.now()});
+  save("expenseList",expenses);
+  document.getElementById("eDesc").value="";
+  document.getElementById("eAmt").value="";
+  render();
+}
+
+function delIncome(id){income=income.filter(x=>x.id!==id);save("incomeList",income);render();}
+function delExpense(id){expenses=expenses.filter(x=>x.id!==id);save("expenseList",expenses);render();}
+
+function render(){
+  const totalInc=income.reduce((s,x)=>s+calcMonthly(x.amt,x.freq),0);
+  const totalExp=expenses.reduce((s,x)=>s+x.amt,0);
+  const sav=totalInc-totalExp;
+  const rate=totalInc>0?(sav/totalInc*100):0;
+
+  // Deductions
+  const dedMap={};
+  expenses.filter(x=>x.sec).forEach(x=>{
+    dedMap[x.sec]=(dedMap[x.sec]||0)+(x.amt*12);
+  });
+  const totalDed=Object.entries(dedMap).reduce((s,[sec,v])=>s+Math.min(v,SEC_CAPS[sec]||Infinity),0);
+
+  // Stats
+  document.getElementById("sInc").textContent=fmt(totalInc);
+  document.getElementById("sExp").textContent=fmt(totalExp);
+  document.getElementById("sSav").textContent=fmt(sav);
+  document.getElementById("sSav").style.color=sav>=0?"var(--teal)":"var(--red)";
+  document.getElementById("sRate").textContent=pct(Math.max(0,rate));
+  document.getElementById("sDed").textContent=fmt(totalDed/12)+" /mo";
+  document.getElementById("incCount").textContent=income.length+" entries";
+  document.getElementById("expCount").textContent=expenses.length+" entries";
+
+  // Save for other pages
+  save("income",totalInc); save("expenses",totalExp); save("savings",sav);
+
+  // Income table
+  document.getElementById("incomeTable").innerHTML=income.length?
+    income.map(x=>`<tr>
+      <td style="color:var(--text);font-weight:600">${x.src}</td>
+      <td><span class="badge badge-g">${x.cat}</span></td>
+      <td style="color:var(--text-3)">${x.freq}</td>
+      <td class="td-num td-pos">${fmt(calcMonthly(x.amt,x.freq))}</td>
+      <td class="td-num">${fmt(calcMonthly(x.amt,x.freq)*12)}</td>
+      <td><button onclick="delIncome(${x.id})" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:16px">×</button></td>
+    </tr>`).join(""):
+    "<tr><td colspan='6' style='text-align:center;color:var(--text-3);padding:18px'>No income entries</td></tr>";
+
+  // Expense table
+  document.getElementById("expenseTable").innerHTML=expenses.length?
+    expenses.map(x=>`<tr>
+      <td style="color:var(--text);font-weight:600">${x.desc}</td>
+      <td><span class="badge badge-r">${x.cat}</span></td>
+      <td class="td-num td-neg">${fmt(x.amt)}</td>
+      <td>${x.sec?`<span class="badge badge-b">${x.sec}</span>`:"—"}</td>
+      <td class="td-num">${x.sec?fmt(Math.min(x.amt*12,SEC_CAPS[x.sec]||x.amt*12)/12):"—"}</td>
+      <td><button onclick="delExpense(${x.id})" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:16px">×</button></td>
+    </tr>`).join(""):
+    "<tr><td colspan='6' style='text-align:center;color:var(--text-3);padding:18px'>No expense entries</td></tr>";
+
+  // Deduction summary
+  const ds=document.getElementById("dedSection");
+  if(Object.keys(dedMap).length>0){
+    ds.style.display="block";
+    document.getElementById("dedList").innerHTML=Object.entries(dedMap).map(([sec,ann])=>`
+      <div class="ded-item">
+        <span class="ded-sec">${sec}</span>
+        <span class="ded-desc">Annual spend: ${fmt(ann)} — Eligible: ${fmt(Math.min(ann,SEC_CAPS[sec]||ann))}</span>
+        <span class="ded-amt">${fmt(Math.min(ann,SEC_CAPS[sec]||ann)/12)}/mo</span>
+      </div>`).join("");
+  } else ds.style.display="none";
+
+  // Chart
+  if(chart)chart.destroy();
+  chart=new Chart(document.getElementById("barChart").getContext("2d"),{
+    type:"bar",
+    data:{labels:["Total Income","Total Expenses","Net Savings"],
+      datasets:[{data:[totalInc,totalExp,Math.max(0,sav)],
+        backgroundColor:["rgba(34,211,165,.75)","rgba(255,93,115,.75)","rgba(79,126,255,.75)"],
+        borderRadius:6}]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>" "+fmt(c.raw)}}},
+      scales:{x:{ticks:{color:"#556070"},grid:{display:false}},
+        y:{ticks:{color:"#556070",callback:v=>"₹"+(v/1000)+"k"},grid:{color:"rgba(255,255,255,.04)"}}}}
+  });
+}
+
+// Load sample data if empty
+if(!income.length && !expenses.length){
+  income=[
+    {src:"Salary",cat:"Employment",amt:85000,freq:"Monthly",id:1},
+    {src:"Freelancing",cat:"Freelance",amt:15000,freq:"Monthly",id:2},
+    {src:"Rental Income",cat:"Rental",amt:12000,freq:"Monthly",id:3},
+    {src:"FD Interest",cat:"Investment",amt:3500,freq:"Monthly",id:4}
+  ];
+  expenses=[
+    {desc:"House Rent",cat:"Housing",amt:18000,sec:"",id:10},
+    {desc:"Grocery & Food",cat:"Food",amt:8000,sec:"",id:11},
+    {desc:"LIC Premium",cat:"Insurance",amt:5000,sec:"80C",id:12},
+    {desc:"PPF Deposit",cat:"Investment",amt:5000,sec:"80C",id:13},
+    {desc:"ELSS SIP",cat:"Investment",amt:5000,sec:"80C",id:14},
+    {desc:"Health Insurance",cat:"Insurance",amt:2500,sec:"80D",id:15},
+    {desc:"Education Loan EMI",cat:"Loan EMI",amt:4500,sec:"80E",id:16},
+    {desc:"NGO Donation",cat:"Other",amt:2000,sec:"80G",id:17},
+    {desc:"Utilities",cat:"Utilities",amt:3500,sec:"",id:18}
+  ];
+  save("incomeList",income); save("expenseList",expenses);
+}
+render();
+</script>
+</body>
+</html>

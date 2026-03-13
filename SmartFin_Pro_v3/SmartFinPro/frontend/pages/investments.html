@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartFin Pro — Investments</title>
+<link rel="stylesheet" href="../css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<nav class="navbar">
+  <a class="brand" href="../dashboard.html"><div class="brand-icon">💰</div><span class="brand-name">SmartFin<span>Pro</span></span></a>
+  <div class="nav-links">
+    <a href="../dashboard.html">Dashboard</a><a href="income.html">Income</a>
+    <a href="tax.html">Tax</a><a href="loans.html">Loans</a>
+    <a href="insurance.html">Insurance</a><a href="investments.html" class="active">Investments</a>
+    <a href="assets.html">Assets</a><a href="returns.html">Returns</a>
+    <a href="schemes.html">Gov Schemes</a><a href="health.html">Health Score</a>
+    <button class="btn-nav-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="breadcrumb"><a href="../dashboard.html">Dashboard</a> › Investment Advisor</div>
+  <div class="page-header">
+    <h1>📊 Investment Plan & Advisor</h1>
+    <p>Risk profiling based on your financial capacity. Personalised portfolio allocation and growth projections.</p>
+  </div>
+
+  <div class="sidebar-l">
+    <!-- LEFT: RISK PROFILING -->
+    <div>
+      <div class="card mb16">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">🎯</div>Risk Profile Questionnaire</div></div>
+        <div class="form-grid" style="grid-template-columns:1fr">
+          <div class="fg"><label>Your Age</label><input id="rAge" type="number" placeholder="32" value="32"><div class="hint">&lt;30 = Aggressive | 30–45 = Moderate | &gt;45 = Conservative</div></div>
+          <div class="fg"><label>Monthly Income (₹)</label><input id="rInc" type="number" placeholder="115500"><div class="hint">Auto-filled from Income page</div></div>
+          <div class="fg"><label>Risk Appetite</label>
+            <select id="rApp"><option>Low — Capital preservation first</option><option selected>Medium — Balanced growth</option><option>High — Aggressive growth</option></select>
+          </div>
+          <div class="fg"><label>Investment Horizon (Years)</label>
+            <select id="rHorizon"><option>1–3 years</option><option>3–5 years</option><option selected>5–10 years</option><option>10–20 years</option><option>20+ years</option></select>
+          </div>
+          <div class="fg"><label>Monthly Investable Surplus (₹)</label><input id="rSurplus" type="number" placeholder="30000"><div class="hint">Auto-filled: Savings from Income page</div></div>
+          <div class="fg"><label>Existing Investments (%)</label>
+            <select id="rExisting"><option>Just starting</option><option selected>Small portfolio (&lt;₹5L)</option><option>Medium (₹5L–₹25L)</option><option>Large (&gt;₹25L)</option></select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full mt16" id="analyzeBtn" onclick="analyze()">🔍 Generate Investment Plan</button>
+      </div>
+
+      <!-- PORTFOLIO TRACKER -->
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">📁</div>Add to My Portfolio</div></div>
+        <div class="form-grid">
+          <div class="fg"><label>Investment Name</label><input id="invName" placeholder="e.g. Axis ELSS Fund"></div>
+          <div class="fg"><label>Type</label>
+            <select id="invType"><option>ELSS</option><option>PPF</option><option>NPS</option><option>Fixed Deposit</option><option>Equity / Stocks</option><option>Index ETF</option><option>Balanced MF</option><option>Gold / SGB</option><option>RBI Bond</option><option>NSC</option></select>
+          </div>
+          <div class="fg"><label>Monthly SIP / Invested (₹)</label><input id="invSIP" type="number" placeholder="5000"></div>
+          <div class="fg"><label>Expected Return (%)</label><input id="invRet" type="number" placeholder="12" step="0.5"></div>
+        </div>
+        <button class="btn btn-teal btn-sm" onclick="addInv()">+ Add Investment</button>
+        <div class="tbl-wrap mt16">
+          <table><thead><tr><th>Investment</th><th>Type</th><th>SIP/mo</th><th>Return</th><th>10Y Value</th><th></th></tr></thead>
+          <tbody id="portfolioTable"><tr><td colspan="6" style="text-align:center;color:var(--text-3);padding:16px">No investments added</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div>
+      <!-- RISK SCORE -->
+      <div class="card mb16" id="riskResultCard" style="display:none">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">🎯</div>Your Risk Profile</div></div>
+        <div class="risk-indicator" id="riskIndicator">
+          <div class="risk-dot risk-med" id="riskDot"></div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text)" id="riskLabel">MEDIUM RISK</div>
+            <div style="font-size:12px;color:var(--text-3);margin-top:2px" id="riskDesc">Balanced growth oriented investor</div>
+          </div>
+          <div style="margin-left:auto;text-align:center">
+            <div style="font-family:var(--font-mono);font-size:28px;font-weight:600;color:var(--yellow)" id="riskScore">7</div>
+            <div style="font-size:10px;color:var(--text-3)">out of 12</div>
+          </div>
+        </div>
+
+        <!-- Radar chart -->
+        <canvas id="radarChart" height="200" style="margin-top:8px"></canvas>
+      </div>
+
+      <!-- PIE ALLOCATION -->
+      <div class="card mb16" id="allocCard" style="display:none">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">🥧</div>Recommended Allocation</div></div>
+        <canvas id="allocChart" height="170"></canvas>
+      </div>
+
+      <!-- RECOMMENDATIONS -->
+      <div class="card mb16" id="recsCard" style="display:none">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">💡</div>Investment Recommendations</div></div>
+        <div class="rec-list" id="recsList"></div>
+      </div>
+
+      <!-- GROWTH PROJECTION -->
+      <div class="card" id="growthCard" style="display:none">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">📈</div>Growth Projections (SIP)</div></div>
+        <canvas id="growthChart" height="180"></canvas>
+        <div class="ded-list mt16" id="projTable"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">SmartFin Pro v3.0 — FY 2024-25 | Projections are indicative</footer>
+<script src="../js/main.js"></script>
+<script>
+let portfolio=load("portfolioList",[]);
+let allocChart=null, radarChart=null, growthChart=null;
+
+const PROFILES={
+  high:{label:"HIGH RISK",desc:"Aggressive growth — max returns over long term",dotClass:"risk-high",
+    color:"var(--red)",recs:[
+      {name:"Direct Equity / Stocks",alloc:"40%",ret:"15–18% p.a.",tax:"LTCG 10% after ₹1L",cat:"badge-r"},
+      {name:"ELSS Mutual Funds",alloc:"25%",ret:"12–15% p.a.",tax:"80C + LTCG 10%",cat:"badge-y"},
+      {name:"Index ETFs (Nifty 50)",alloc:"20%",ret:"11–13% p.a.",tax:"LTCG 10%",cat:"badge-b"},
+      {name:"NPS Tier II",alloc:"10%",ret:"9–11% p.a.",tax:"Partial 80CCD",cat:"badge-p"},
+      {name:"Liquid Fund (emergency)",alloc:"5%",ret:"6–7% p.a.",tax:"STCG taxable",cat:"badge-t"}
+    ],
+    radar:[10,9,8,9,10,7],allocData:[40,25,20,10,5],
+    allocLabels:["Equity","ELSS","ETF","NPS","Liquid"]
+  },
+  medium:{label:"MEDIUM RISK",desc:"Balanced growth — growth with some stability",dotClass:"risk-med",
+    color:"var(--yellow)",recs:[
+      {name:"Balanced / Hybrid Mutual Funds",alloc:"30%",ret:"10–12% p.a.",tax:"LTCG 10%",cat:"badge-b"},
+      {name:"ELSS Mutual Funds",alloc:"20%",ret:"12–15% p.a.",tax:"80C deduction",cat:"badge-y"},
+      {name:"PPF / NPS",alloc:"25%",ret:"7.1–9% p.a.",tax:"EEE / 80CCD",cat:"badge-g"},
+      {name:"FD / Post Office TD",alloc:"15%",ret:"6.5–7.5% p.a.",tax:"Interest taxable",cat:"badge-t"},
+      {name:"SGB / Gold ETF",alloc:"10%",ret:"7–8% p.a.",tax:"Tax-free on maturity",cat:"badge-a"}
+    ],
+    radar:[6,8,7,8,6,9],allocData:[30,20,25,15,10],
+    allocLabels:["Hybrid MF","ELSS","PPF/NPS","FD","Gold/SGB"]
+  },
+  low:{label:"LOW RISK",desc:"Capital preservation — safety over returns",dotClass:"risk-low",
+    color:"var(--green)",recs:[
+      {name:"Public Provident Fund (PPF)",alloc:"35%",ret:"7.1% p.a.",tax:"EEE — fully exempt",cat:"badge-g"},
+      {name:"Fixed Deposits (Bank/Post)",alloc:"30%",ret:"6–7.5% p.a.",tax:"Interest taxable",cat:"badge-b"},
+      {name:"NSC / Post Office TD",alloc:"20%",ret:"7.5–7.7% p.a.",tax:"80C deduction",cat:"badge-t"},
+      {name:"Govt / RBI Bonds",alloc:"10%",ret:"7.5–8.05% p.a.",tax:"Interest taxable",cat:"badge-p"},
+      {name:"Liquid / Money Market",alloc:"5%",ret:"6–7% p.a.",tax:"STCG taxable",cat:"badge-a"}
+    ],
+    radar:[3,5,4,5,3,9],allocData:[35,30,20,10,5],
+    allocLabels:["PPF","FD","NSC","Bonds","Liquid"]
+  }
+};
+
+function analyze(){
+  const age=parseInt(document.getElementById("rAge").value)||30;
+  const inc=parseFloat(document.getElementById("rInc").value)||load("income",115500);
+  const appStr=document.getElementById("rApp").value;
+  const horizon=document.getElementById("rHorizon").value;
+  const surplus=parseFloat(document.getElementById("rSurplus").value)||load("savings",50000);
+
+  // Score 0-12
+  const ageS=age<30?3:age<45?2:1;
+  const incS=inc>100000?3:inc>50000?2:1;
+  const appS=appStr.includes("High")?3:appStr.includes("Medium")?2:1;
+  const horizS=horizon.includes("20+")?3:horizon.includes("10–20")?3:horizon.includes("5–10")?2:1;
+  const score=ageS+incS+appS+horizS;
+
+  const profileKey=score>=10?"high":score>=7?"medium":"low";
+  const prof=PROFILES[profileKey];
+
+  // Show cards
+  ["riskResultCard","allocCard","recsCard","growthCard"].forEach(id=>document.getElementById(id).style.display="block");
+
+  // Risk indicator
+  document.getElementById("riskLabel").textContent=prof.label;
+  document.getElementById("riskDesc").textContent=prof.desc;
+  document.getElementById("riskScore").textContent=score;
+  document.getElementById("riskScore").style.color=prof.color;
+  const dot=document.getElementById("riskDot");
+  dot.className="risk-dot "+prof.dotClass;
+
+  // Radar
+  if(radarChart)radarChart.destroy();
+  radarChart=new Chart(document.getElementById("radarChart").getContext("2d"),{
+    type:"radar",
+    data:{labels:["Growth Potential","Risk Tolerance","Horizon","Income Stability","Diversification","Safety"],
+      datasets:[{label:"Your Profile",data:prof.radar,fill:true,
+        backgroundColor:"rgba(245,166,35,.15)",borderColor:"var(--accent)",
+        pointBackgroundColor:"var(--accent)"}]},
+    options:{scales:{r:{grid:{color:"rgba(255,255,255,.1)"},
+      ticks:{display:false,backdropColor:"transparent"},
+      pointLabels:{color:"#9ba8c0",font:{size:11,family:"DM Sans"}}}},
+      plugins:{legend:{display:false}}}
+  });
+
+  // Allocation donut
+  if(allocChart)allocChart.destroy();
+  allocChart=new Chart(document.getElementById("allocChart").getContext("2d"),{
+    type:"doughnut",
+    data:{labels:prof.allocLabels,datasets:[{data:prof.allocData,
+      backgroundColor:["#4f7eff","#f5a623","#22d3a5","#a78bfa","#ff5d73"],
+      borderWidth:0,hoverOffset:5}]},
+    options:{cutout:"65%",plugins:{legend:{position:"right",labels:{color:"#9ba8c0",font:{family:"DM Sans",size:11},boxWidth:10}},
+      tooltip:{callbacks:{label:c=>c.label+": "+c.raw+"%"}}}}
+  });
+
+  // Recs
+  document.getElementById("recsList").innerHTML=prof.recs.map(r=>`
+    <div class="rec-card">
+      <div class="rec-alloc">${r.alloc}</div>
+      <div class="rec-info"><div class="rec-name">${r.name}</div><div class="rec-ret">${r.ret} · Tax: ${r.tax}</div></div>
+      <span class="badge ${r.cat}" style="font-size:10px">${r.ret.split("–")[0]}</span>
+    </div>`).join("");
+
+  // Growth projection
+  const sip=surplus*0.5;
+  const years=[5,10,15,20];
+  const rates={low:7,medium:11,high:15};
+  const r=rates[profileKey]/100/12;
+  const projData=years.map(y=>{const n=y*12;return r>0?sip*(Math.pow(1+r,n)-1)/r*(1+r):sip*n;});
+  const invested=years.map(y=>sip*y*12);
+
+  if(growthChart)growthChart.destroy();
+  growthChart=new Chart(document.getElementById("growthChart").getContext("2d"),{
+    type:"line",
+    data:{labels:years.map(y=>y+"Y"),datasets:[
+      {label:"Projected Value",data:projData,borderColor:"var(--accent)",backgroundColor:"rgba(245,166,35,.1)",fill:true,tension:.4,pointRadius:5},
+      {label:"Amount Invested",data:invested,borderColor:"rgba(79,126,255,.6)",backgroundColor:"rgba(79,126,255,.05)",fill:true,tension:.4,borderDash:[4,4]}
+    ]},
+    options:{plugins:{legend:{labels:{color:"#9ba8c0",font:{family:"DM Sans",size:11}}},
+      tooltip:{callbacks:{label:c=>" "+fmt(c.raw)}}},
+      scales:{x:{ticks:{color:"#556070"},grid:{display:false}},
+        y:{ticks:{color:"#556070",callback:v=>"₹"+(v/100000).toFixed(0)+"L"},grid:{color:"rgba(255,255,255,.04)"}}}}
+  });
+
+  // Proj table
+  document.getElementById("projTable").innerHTML=years.map((y,i)=>`
+    <div class="ded-item">
+      <span class="ded-sec" style="color:var(--accent)">${y}YR</span>
+      <span class="ded-desc">SIP ${fmt(sip)}/mo @ ${rates[profileKey]}% p.a. — Invested: ${fmt(invested[i])}</span>
+      <span class="ded-amt" style="font-size:15px">${fmt(projData[i])}</span>
+    </div>`).join("");
+
+  save("riskProfile",profileKey);
+}
+
+function addInv(){
+  const name=document.getElementById("invName").value.trim();
+  const type=document.getElementById("invType").value;
+  const sip=parseFloat(document.getElementById("invSIP").value)||0;
+  const ret=parseFloat(document.getElementById("invRet").value)||8;
+  if(!name||!sip)return alert("Enter name and SIP amount.");
+  const n=120,r=ret/100/12;
+  const val10y=r>0?sip*(Math.pow(1+r,n)-1)/r*(1+r):sip*n;
+  portfolio.push({name,type,sip,ret,val10y,id:Date.now()});
+  save("portfolioList",portfolio);
+  document.getElementById("invName").value="";
+  document.getElementById("invSIP").value="";
+  renderPortfolio();
+}
+function delInv(id){portfolio=portfolio.filter(p=>p.id!==id);save("portfolioList",portfolio);renderPortfolio();}
+function renderPortfolio(){
+  document.getElementById("portfolioTable").innerHTML=portfolio.length?
+    portfolio.map(p=>`<tr>
+      <td style="font-weight:600;color:var(--text)">${p.name}</td>
+      <td><span class="badge badge-b">${p.type}</span></td>
+      <td class="td-num">${fmt(p.sip)}</td>
+      <td class="td-num">${p.ret}%</td>
+      <td class="td-num td-pos">${fmt(p.val10y)}</td>
+      <td><button onclick="delInv(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:16px">×</button></td>
+    </tr>`).join(""):
+    "<tr><td colspan='6' style='text-align:center;color:var(--text-3);padding:16px'>No investments</td></tr>";
+}
+
+// Auto-fill
+document.getElementById("rInc").value=load("income",115500);
+document.getElementById("rSurplus").value=Math.max(0,load("savings",50000));
+if(load("portfolioList",[]).length===0){
+  portfolio=[
+    {name:"Axis ELSS Fund",type:"ELSS",sip:5000,ret:13,val10y:5000*(Math.pow(1+13/100/12,120)-1)/(13/100/12)*(1+13/100/12),id:1},
+    {name:"PPF Account",type:"PPF",sip:5000,ret:7.1,val10y:5000*(Math.pow(1+7.1/100/12,120)-1)/(7.1/100/12)*(1+7.1/100/12),id:2},
+    {name:"Nifty 50 Index ETF",type:"Index ETF",sip:3000,ret:12,val10y:3000*(Math.pow(1+12/100/12,120)-1)/(12/100/12)*(1+12/100/12),id:3}
+  ];
+  save("portfolioList",portfolio);
+}
+renderPortfolio();
+analyze();
+</script>
+</body>
+</html>

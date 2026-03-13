@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartFin Pro — Returns Tracker</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav class="navbar">
+  <a class="brand" href="../dashboard.html"><div class="brand-icon">💰</div><span class="brand-name">SmartFin<span>Pro</span></span></a>
+  <div class="nav-links">
+    <a href="../dashboard.html">Dashboard</a><a href="income.html">Income</a>
+    <a href="tax.html">Tax</a><a href="loans.html">Loans</a>
+    <a href="insurance.html">Insurance</a><a href="investments.html">Investments</a>
+    <a href="assets.html">Assets</a><a href="returns.html" class="active">Returns</a>
+    <a href="schemes.html">Gov Schemes</a><a href="health.html">Health Score</a>
+    <button class="btn-nav-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="breadcrumb"><a href="../dashboard.html">Dashboard</a> › Returns Filing Tracker</div>
+  <div class="page-header">
+    <h1>📑 Income Tax Returns Tracker — FY 2024-25</h1>
+    <p>ITR filing checklist, key deadlines, document status and return preparation summary.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card g"><div class="stat-icon">✅</div><div class="stat-val" id="rtDone">0</div><div class="stat-lbl">Docs Ready</div></div>
+    <div class="stat-card y"><div class="stat-icon">⏳</div><div class="stat-val" id="rtPending">0</div><div class="stat-lbl">Pending</div></div>
+    <div class="stat-card r"><div class="stat-icon">📅</div><div class="stat-val" id="rtDueDays">—</div><div class="stat-lbl">Days to Deadline</div></div>
+    <div class="stat-card t"><div class="stat-icon">📋</div><div class="stat-val" id="rtITRType">ITR-1</div><div class="stat-lbl">Applicable Form</div></div>
+  </div>
+
+  <div class="two-col">
+    <!-- LEFT: CHECKLIST + TIMELINE -->
+    <div>
+      <!-- FILING DEADLINES -->
+      <div class="card mb16">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">📅</div>Key Deadlines — AY 2025-26</div></div>
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-dot done"></div>
+            <div class="tl-title">Form 16 from Employer</div>
+            <div class="tl-sub">Available by June 15, 2025 — ✅ Request from HR if not received</div>
+          </div>
+          <div class="tl-item"><div class="tl-dot done"></div>
+            <div class="tl-title">AIS / 26AS Download</div>
+            <div class="tl-sub">Available now — Download from IT Portal (incometax.gov.in)</div>
+          </div>
+          <div class="tl-item"><div class="tl-dot pending"></div>
+            <div class="tl-title">ITR Filing Deadline (Non-audit)</div>
+            <div class="tl-sub">⚠️ July 31, 2025 — Individual salaried taxpayers</div>
+          </div>
+          <div class="tl-item"><div class="tl-dot"></div>
+            <div class="tl-title">Revised / Belated Return</div>
+            <div class="tl-sub">December 31, 2025 — File if you missed July deadline</div>
+          </div>
+          <div class="tl-item"><div class="tl-dot"></div>
+            <div class="tl-title">Tax Audit Cases</div>
+            <div class="tl-sub">October 31, 2025 — Business income above ₹1 crore</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOCUMENT CHECKLIST -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><div class="card-icon">📋</div>Document Checklist</div>
+          <button class="btn btn-ghost btn-sm" onclick="checkAll()">Mark All Ready</button>
+        </div>
+        <div id="checklistItems"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: SUMMARY + ITR GUIDE -->
+    <div>
+      <!-- RETURN SUMMARY (auto-pulls from Tax page) -->
+      <div class="card mb16">
+        <div class="card-hd">
+          <div class="card-title"><div class="card-icon">🧾</div>Return Summary (from Tax page)</div>
+          <a href="tax.html" class="btn btn-ghost btn-sm">Edit →</a>
+        </div>
+        <div class="ded-list" id="returnSummaryPull"></div>
+      </div>
+
+      <!-- ITR FORM GUIDE -->
+      <div class="card mb16">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">📝</div>Which ITR Form to File?</div></div>
+        <div class="ded-list">
+          <div class="ded-item"><span class="ded-sec" style="color:var(--green)">ITR-1</span><span class="ded-desc">Sahaj — Salary + 1 house property + interest income. Total income ≤₹50L</span></div>
+          <div class="ded-item"><span class="ded-sec" style="color:var(--teal)">ITR-2</span><span class="ded-desc">Capital gains, foreign assets, multiple properties, salary + business</span></div>
+          <div class="ded-item"><span class="ded-sec" style="color:var(--yellow)">ITR-3</span><span class="ded-desc">Business or professional income (non-presumptive)</span></div>
+          <div class="ded-item"><span class="ded-sec" style="color:var(--purple)">ITR-4</span><span class="ded-desc">Sugam — Presumptive income scheme u/s 44AD / 44AE / 44ADA</span></div>
+        </div>
+      </div>
+
+      <!-- REFUND TRACKER -->
+      <div class="card mb16">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">💰</div>Refund Estimator</div></div>
+        <div class="fg mb16"><label>Total TDS Deducted (₹)</label><input id="tdsDeducted" type="number" placeholder="147304" oninput="calcRefund()"></div>
+        <div id="refundBox" class="result-box ok" style="display:none"></div>
+      </div>
+
+      <!-- FILING STEPS -->
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">🚀</div>How to File — Step by Step</div></div>
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-dot done"></div><div class="tl-title">1. Gather Documents</div><div class="tl-sub">Form 16, AIS, bank statements, investment proofs</div></div>
+          <div class="tl-item"><div class="tl-dot pending"></div><div class="tl-title">2. Register on IT Portal</div><div class="tl-sub">incometax.gov.in → Login with PAN</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">3. Select ITR Form</div><div class="tl-sub">File → File Income Tax Return → AY 2025-26</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">4. Pre-fill & Verify Data</div><div class="tl-sub">Cross-check with AIS / 26AS — correct mismatches</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">5. Submit & e-Verify</div><div class="tl-sub">Via Aadhaar OTP / Net Banking / DSC — complete within 30 days</div></div>
+        </div>
+        <a href="https://incometax.gov.in" target="_blank" class="btn btn-primary btn-full mt16">🌐 Go to IT Portal →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">SmartFin Pro v3.0 — FY 2024-25</footer>
+<script src="../js/main.js"></script>
+<script>
+const DOCS=[
+  {id:"d1",name:"Form 16 (Part A & B)",desc:"Salary TDS certificate from employer",link:"From your HR/payroll"},
+  {id:"d2",name:"Form 26AS / AIS",desc:"Annual Information Statement from IT portal",link:"incometax.gov.in → AIS"},
+  {id:"d3",name:"Bank Statements",desc:"All accounts — interest income, transactions",link:"Net banking download"},
+  {id:"d4",name:"80C Proofs",desc:"PPF passbook, ELSS statements, LIC receipts",link:"From bank/insurer"},
+  {id:"d5",name:"80D Health Premium",desc:"Health insurance premium payment receipts",link:"From insurer"},
+  {id:"d6",name:"Home Loan Statement",desc:"Interest certificate from bank (Sec 24B)",link:"From bank"},
+  {id:"d7",name:"Rental Income Details",desc:"Rental receipts, tenant details if applicable",link:"Personal records"},
+  {id:"d8",name:"Capital Gains Statement",desc:"From broker — for mutual fund / stock sales",link:"Broker statement"},
+  {id:"d9",name:"PAN Card",desc:"Permanent Account Number",link:"NSDL / UTIITSL"},
+  {id:"d10",name:"Aadhaar Card",desc:"For e-verification of return",link:"UIDAI"},
+];
+
+let docStatus=load("docStatus",{});
+
+function renderChecklist(){
+  let done=0,pending=0;
+  document.getElementById("checklistItems").innerHTML=DOCS.map(d=>{
+    const checked=!!docStatus[d.id];
+    if(checked)done++;else pending++;
+    return `<div class="ded-item" style="cursor:pointer" onclick="toggleDoc('${d.id}')">
+      <span class="ded-sec" style="color:${checked?"var(--green)":"var(--text-3)"};font-size:18px">${checked?"✅":"⬜"}</span>
+      <span class="ded-desc"><strong style="color:${checked?"var(--text)":"var(--text-2)"}">${d.name}</strong><br><span style="font-size:10.5px;color:var(--text-3)">${d.desc} — ${d.link}</span></span>
+      <span class="badge ${checked?"badge-g":"badge-y"}">${checked?"Ready":"Pending"}</span>
+    </div>`;
+  }).join("");
+  document.getElementById("rtDone").textContent=done;
+  document.getElementById("rtPending").textContent=pending;
+
+  // Deadline countdown
+  const deadline=new Date("2025-07-31");
+  const days=Math.ceil((deadline-new Date())/(1000*60*60*24));
+  const el=document.getElementById("rtDueDays");
+  el.textContent=days>0?days+"d":days===0?"Today!":"Overdue";
+  el.parentElement.className="stat-card "+(days<30?"r":days<60?"y":"g");
+}
+
+function toggleDoc(id){docStatus[id]=!docStatus[id];save("docStatus",docStatus);renderChecklist();}
+function checkAll(){DOCS.forEach(d=>docStatus[d.id]=true);save("docStatus",docStatus);renderChecklist();}
+
+function pullReturnSummary(){
+  const inc=load("income",115500)*12;
+  const sav=load("savings",64000)*12;
+  document.getElementById("returnSummaryPull").innerHTML=`
+    <div class="ded-item"><span class="ded-sec" style="color:var(--teal)">INC</span><span class="ded-desc">Gross Annual Income</span><span class="ded-amt">${fmt(inc)}</span></div>
+    <div class="ded-item"><span class="ded-sec">DED</span><span class="ded-desc">Estimated Deductions</span><span class="ded-amt" style="color:var(--green)">~ ₹3,03,000</span></div>
+    <div class="ded-item"><span class="ded-sec" style="color:var(--red)">TAX</span><span class="ded-desc">Estimated Tax (Old Regime)</span><span class="ded-amt" style="color:var(--red)">₹1,47,304</span></div>
+    <div class="ded-item"><span class="ded-sec" style="color:var(--purple)">TDS</span><span class="ded-desc">Monthly TDS deducted</span><span class="ded-amt">₹12,275/mo</span></div>
+    <div class="ded-item"><span class="ded-sec" style="color:var(--green)">RGNM</span><span class="ded-desc" style="font-weight:700">✅ Recommended Regime</span><span class="ded-amt" style="color:var(--green)">OLD REGIME</span></div>
+    <div style="margin-top:10px"><a href="tax.html" class="btn btn-ghost btn-sm btn-full">Recalculate in Tax Optimizer →</a></div>`;
+}
+
+function calcRefund(){
+  const tds=parseFloat(document.getElementById("tdsDeducted").value)||0;
+  const tax=147304; // from default
+  const diff=tds-tax;
+  if(!tds)return;
+  showResult("refundBox",`
+    <p>TDS Deducted <strong>${fmt(tds)}</strong></p>
+    <p>Estimated Tax Payable <strong>${fmt(tax)}</strong></p>
+    <hr class="rdiv">
+    <p style="font-weight:700">${diff>0?"Refund Due":"Additional Tax"} <strong style="color:${diff>0?"var(--green)":"var(--red)"};font-size:16px">${fmt(Math.abs(diff))}</strong></p>
+    <p style="font-size:11px;color:var(--text-3);margin-top:4px">${diff>0?"Refund will be credited to bank account after ITR processing":"Pay balance via Challan 280 before filing"}</p>`,"ok");
+}
+
+// Auto set ITR form
+const income=load("income",115500)*12;
+document.getElementById("rtITRType").textContent=income<=500000?"ITR-1 (Sahaj)":"ITR-1";
+
+renderChecklist();
+pullReturnSummary();
+</script>
+</body>
+</html>

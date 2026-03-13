@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartFin Pro — Login</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.login-wrap{width:100%;max-width:420px;padding:24px}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:38px;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.login-brand{text-align:center;margin-bottom:30px}
+.login-logo{width:54px;height:54px;background:linear-gradient(135deg,var(--accent),#e8851a);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 14px}
+.login-title{font-family:var(--font-display);font-size:26px;color:var(--text)}
+.login-sub{font-size:12.5px;color:var(--text-3);margin-top:3px}
+.demo-tip{background:var(--surface-3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--text-3);text-align:center;margin-bottom:18px}
+.demo-tip strong{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-logo">💰</div>
+      <div class="login-title">SmartFin<span style="color:var(--accent)">Pro</span></div>
+      <div class="login-sub">Personal Finance & Tax Optimization Platform</div>
+    </div>
+    <div class="demo-tip">Demo: <strong>demo@smartfin.in</strong> / <strong>password123</strong></div>
+    <div class="fg mb16"><label>Email Address</label>
+      <input type="email" id="email" placeholder="demo@smartfin.in" value="demo@smartfin.in"></div>
+    <div class="fg mb16"><label>Password</label>
+      <input type="password" id="password" placeholder="••••••••" value="password123"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:8px;padding:13px" onclick="loginUser(event)">
+      Sign In to SmartFin Pro →
+    </button>
+  </div>
+</div>
+<script src="js/main.js"></script>
+</body>
+</html>

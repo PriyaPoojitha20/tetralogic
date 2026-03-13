@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartFin Pro — Health Score</title>
+<link rel="stylesheet" href="../css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<nav class="navbar">
+  <a class="brand" href="../dashboard.html"><div class="brand-icon">💰</div><span class="brand-name">SmartFin<span>Pro</span></span></a>
+  <div class="nav-links">
+    <a href="../dashboard.html">Dashboard</a><a href="income.html">Income</a>
+    <a href="tax.html">Tax</a><a href="loans.html">Loans</a>
+    <a href="insurance.html">Insurance</a><a href="investments.html">Investments</a>
+    <a href="assets.html">Assets</a><a href="returns.html">Returns</a>
+    <a href="schemes.html">Gov Schemes</a><a href="health.html" class="active">Health Score</a>
+    <button class="btn-nav-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="breadcrumb"><a href="../dashboard.html">Dashboard</a> › Financial Health Score</div>
+  <div class="page-header">
+    <h1>💪 Financial Health Score</h1>
+    <p>Your 100-point comprehensive financial fitness score with actionable improvement tips.</p>
+  </div>
+
+  <div class="sidebar-r">
+    <!-- LEFT: INPUTS + BREAKDOWN -->
+    <div>
+      <!-- SCORING INPUTS -->
+      <div class="card mb16">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">📊</div>Score Inputs</div>
+          <button class="btn btn-ghost btn-sm" onclick="autoCalc()">⚡ Auto-fill</button>
+        </div>
+        <div class="alert alert-info">💡 Click "Auto-fill" to pull data from all other modules, or enter manually.</div>
+        <div class="form-grid">
+          <div class="fg"><label>Monthly Income (₹)</label><input id="hInc" type="number" placeholder="115500"></div>
+          <div class="fg"><label>Monthly Expenses (₹)</label><input id="hExp" type="number" placeholder="51500"></div>
+          <div class="fg"><label>Monthly Savings (₹)</label><input id="hSav" type="number" placeholder="64000"></div>
+          <div class="fg"><label>Monthly Investment SIP (₹)</label><input id="hInvest" type="number" placeholder="15000"></div>
+          <div class="fg"><label>Monthly Loan EMI (₹)</label><input id="hEMI" type="number" placeholder="35000"></div>
+          <div class="fg"><label>Total Insurance Coverage (₹)</label><input id="hIns" type="number" placeholder="5800000"></div>
+          <div class="fg"><label>Emergency Fund (Months)</label><input id="hEmerg" type="number" placeholder="3"></div>
+          <div class="fg"><label>Total Debt (₹)</label><input id="hDebt" type="number" placeholder="4000000"></div>
+        </div>
+        <button class="btn btn-primary btn-full mt16" onclick="calcScore()">🎯 Calculate Score</button>
+      </div>
+
+      <!-- DIMENSION BREAKDOWN -->
+      <div class="card" id="dimCard" style="display:none">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">📋</div>Dimension Scores</div></div>
+        <div id="dimList"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: SCORE CIRCLE + RADAR -->
+    <div>
+      <!-- SCORE CIRCLE -->
+      <div class="card mb16" style="text-align:center">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">🏆</div>Overall Score</div></div>
+        <div class="score-wrap">
+          <div class="score-circle">
+            <svg viewBox="0 0 120 120" width="138" height="138">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="10"/>
+              <circle id="scorePath" cx="60" cy="60" r="52" fill="none"
+                stroke="var(--accent)" stroke-width="10" stroke-linecap="round"
+                stroke-dasharray="326.7" stroke-dashoffset="326.7"
+                style="transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1),stroke .5s"/>
+            </svg>
+            <div class="score-num-wrap">
+              <span class="num" id="scoreNum">—</span>
+              <span class="grade" id="scoreGrade">Not Calculated</span>
+            </div>
+          </div>
+        </div>
+        <div id="scoreBadge" style="margin-top:6px"></div>
+        <div id="scoreVerdict" style="font-size:13px;color:var(--text-2);margin-top:8px;max-width:260px;margin-left:auto;margin-right:auto;line-height:1.5"></div>
+      </div>
+
+      <!-- RADAR -->
+      <div class="card mb16" id="radarCard" style="display:none">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">🎯</div>Financial Radar</div></div>
+        <canvas id="radarChart" height="220"></canvas>
+      </div>
+
+      <!-- TIPS -->
+      <div class="card" id="tipsCard" style="display:none">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">💡</div>Top Improvement Tips</div></div>
+        <div id="tipsList" class="ded-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">SmartFin Pro v3.0 — FY 2024-25</footer>
+<script src="../js/main.js"></script>
+<script>
+let radarChart=null;
+
+const DIMS=[
+  {key:"income",label:"Income Stability",max:15,icon:"💰",
+    score(v){return v.inc>100000?15:v.inc>50000?10:v.inc>25000?7:3;},
+    tip:"Consider adding a second income stream (rental/freelance/dividend)"
+  },
+  {key:"expense",label:"Expense Control",max:20,icon:"💸",
+    score(v){const r=v.exp/v.inc;return r<0.4?20:r<0.6?15:r<0.75?8:3;},
+    tip:"Target expense ratio below 40% of income — reduce discretionary spending"
+  },
+  {key:"savings",label:"Savings Rate",max:20,icon:"🏦",
+    score(v){const r=v.sav/v.inc;return r>=0.3?20:r>=0.2?15:r>=0.1?8:3;},
+    tip:"Aim for 20%+ savings rate — automate via SIP on payday"
+  },
+  {key:"invest",label:"Investment Discipline",max:15,icon:"📈",
+    score(v){const r=v.invest/v.inc;return r>=0.2?15:r>=0.1?10:r>=0.05?6:2;},
+    tip:"Invest at least 10% of income in growth assets — ELSS, NPS, equity"
+  },
+  {key:"debt",label:"Debt Management",max:15,icon:"🏦",
+    score(v){const r=v.emi/v.inc;return r<=0.3?15:r<=0.4?10:r<=0.5?6:2;},
+    tip:"Keep EMI below 30% of income — prepay high-interest debt first"
+  },
+  {key:"ins",label:"Insurance Coverage",max:10,icon:"🛡️",
+    score(v){const r=v.ins/(v.inc*12);return r>=10?10:r>=5?6:r>=2?3:1;},
+    tip:"Life cover should be 10–15× annual income. Add health cover ≥₹5L"
+  },
+  {key:"emerg",label:"Emergency Fund",max:5,icon:"🚨",
+    score(v){return v.emerg>=6?5:v.emerg>=3?3:v.emerg>=1?1:0;},
+    tip:"Build 6-month emergency fund in liquid FD or money market fund"
+  }
+];
+
+function autoCalc(){
+  document.getElementById("hInc").value=load("income",115500);
+  document.getElementById("hExp").value=load("expenses",51500);
+  document.getElementById("hSav").value=Math.max(0,load("savings",64000));
+  document.getElementById("hEMI").value=load("loanList",[]).reduce((s,l)=>s+l.emi,0).toFixed(0);
+  document.getElementById("hIns").value=load("policyList",[]).reduce((s,p)=>s+p.cov,0);
+  const portSIP=load("portfolioList",[]).reduce((s,p)=>s+p.sip,0);
+  document.getElementById("hInvest").value=portSIP||15000;
+  document.getElementById("hDebt").value=load("loanList",[]).reduce((s,l)=>s+l.P,0);
+}
+
+function calcScore(){
+  const v={
+    inc:parseFloat(document.getElementById("hInc").value)||0,
+    exp:parseFloat(document.getElementById("hExp").value)||0,
+    sav:parseFloat(document.getElementById("hSav").value)||0,
+    invest:parseFloat(document.getElementById("hInvest").value)||0,
+    emi:parseFloat(document.getElementById("hEMI").value)||0,
+    ins:parseFloat(document.getElementById("hIns").value)||0,
+    emerg:parseFloat(document.getElementById("hEmerg").value)||0,
+    debt:parseFloat(document.getElementById("hDebt").value)||0
+  };
+  if(!v.inc)return alert("Enter at least your monthly income.");
+
+  const scores=DIMS.map(d=>({...d,s:Math.min(d.max,d.score(v))}));
+  const total=scores.reduce((s,d)=>s+d.s,0);
+  const maxTotal=scores.reduce((s,d)=>s+d.max,0); // 100
+
+  // Grade
+  const grade=total>=90?"A+":total>=75?"A":total>=60?"B":total>=45?"C":"D";
+  const verdict=total>=90?"Excellent! You are financially fit with strong habits across all dimensions.":
+    total>=75?"Very Good. A few areas can be fine-tuned for financial excellence.":
+    total>=60?"Good. You have solid fundamentals — work on weaker areas.":
+    total>=45?"Fair. Significant improvements needed in multiple dimensions.":
+    "Needs Work. Focus on basics: build emergency fund, cut expenses, start investing.";
+  const gradeColor=total>=90?"var(--green)":total>=75?"var(--teal)":total>=60?"var(--yellow)":total>=45?"var(--accent)":"var(--red)";
+  const strokeColor=gradeColor;
+
+  // Animate circle
+  const circumference=326.7;
+  const offset=circumference-(total/100)*circumference;
+  const path=document.getElementById("scorePath");
+  setTimeout(()=>{path.style.strokeDashoffset=offset;path.style.stroke=strokeColor;},50);
+  document.getElementById("scoreNum").textContent=total;
+  document.getElementById("scoreNum").style.color=strokeColor;
+  document.getElementById("scoreGrade").textContent=grade;
+  document.getElementById("scoreBadge").innerHTML=`<span class="badge" style="background:rgba(255,255,255,.07);color:${gradeColor};font-size:13px;padding:5px 16px">${grade} — ${total>=90?"EXCELLENT":total>=75?"VERY GOOD":total>=60?"GOOD":total>=45?"FAIR":"NEEDS WORK"}</span>`;
+  document.getElementById("scoreVerdict").textContent=verdict;
+
+  // Dimension list
+  document.getElementById("dimCard").style.display="block";
+  document.getElementById("dimList").innerHTML=scores.map(d=>{
+    const pct=d.s/d.max*100;
+    const col=pct>=80?"var(--green)":pct>=60?"var(--teal)":pct>=40?"var(--yellow)":"var(--red)";
+    return `<div style="margin-bottom:14px">
+      <div class="flex fjb fac" style="margin-bottom:5px">
+        <span style="font-size:12.5px;font-weight:600;color:var(--text)">${d.icon} ${d.label}</span>
+        <span style="font-family:var(--font-mono);font-size:12px;color:${col}">${d.s}/${d.max}</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;--pf:${col};--pf2:${col}"></div></div>
+    </div>`;
+  }).join("");
+
+  // Radar
+  document.getElementById("radarCard").style.display="block";
+  if(radarChart)radarChart.destroy();
+  radarChart=new Chart(document.getElementById("radarChart").getContext("2d"),{
+    type:"radar",
+    data:{labels:scores.map(d=>d.label),
+      datasets:[{label:"Your Score",data:scores.map(d=>d.s/d.max*100),fill:true,
+        backgroundColor:"rgba(245,166,35,.15)",borderColor:"var(--accent)",
+        pointBackgroundColor:"var(--accent)"},
+        {label:"Target",data:scores.map(()=>80),fill:false,
+          borderColor:"rgba(45,212,191,.4)",borderDash:[4,4],
+          pointRadius:0}
+      ]},
+    options:{scales:{r:{min:0,max:100,grid:{color:"rgba(255,255,255,.1)"},
+      ticks:{display:false,backdropColor:"transparent"},
+      pointLabels:{color:"#9ba8c0",font:{size:10.5,family:"DM Sans"}}}},
+      plugins:{legend:{labels:{color:"#9ba8c0",font:{family:"DM Sans",size:11}}}}}
+  });
+
+  // Tips
+  const weakAreas=scores.filter(d=>d.s/d.max<0.75).sort((a,b)=>a.s/a.max-b.s/b.max).slice(0,4);
+  document.getElementById("tipsCard").style.display="block";
+  document.getElementById("tipsList").innerHTML=weakAreas.length?
+    weakAreas.map((d,i)=>`
+      <div class="ded-item">
+        <span class="ded-sec" style="color:var(--accent)">#${i+1}</span>
+        <span class="ded-desc"><strong style="color:var(--text)">${d.icon} ${d.label}</strong><br>${d.tip}</span>
+        <span class="badge badge-y">${d.s}/${d.max}</span>
+      </div>`).join(""):
+    `<div class="ded-item"><span class="ded-sec" style="color:var(--green)">🎉</span><span class="ded-desc">Outstanding! All dimensions are strong. Keep maintaining your financial discipline.</span></div>`;
+
+  save("healthScore",total);
+  save("healthGrade",grade);
+}
+
+autoCalc();
+calcScore();
+</script>
+</body>
+</html>

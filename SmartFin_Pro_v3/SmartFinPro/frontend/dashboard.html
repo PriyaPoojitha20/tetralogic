@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartFin Pro — Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="brand" href="dashboard.html">
+    <div class="brand-icon">💰</div>
+    <span class="brand-name">SmartFin<span>Pro</span></span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="pages/income.html">Income</a>
+    <a href="pages/tax.html">Tax</a>
+    <a href="pages/loans.html">Loans</a>
+    <a href="pages/insurance.html">Insurance</a>
+    <a href="pages/investments.html">Investments</a>
+    <a href="pages/assets.html">Assets</a>
+    <a href="pages/returns.html">Returns</a>
+    <a href="pages/schemes.html">Gov Schemes</a>
+    <a href="pages/health.html">Health Score</a>
+    <span id="navUser" style="color:var(--text-3);font-size:12px;padding:0 8px"></span>
+    <button class="btn-nav-logout" onclick="logout()">Logout</button>
+  </div>
+  <button class="hamburger" id="hamburger">☰</button>
+</nav>
+
+<div class="ticker">
+  <span class="ticker-inner">
+    &nbsp;&nbsp;&nbsp;🚀 <span class="hl">SmartFin Pro FY 2024-25</span> — New Regime: Zero tax up to ₹7 Lakh &nbsp;|&nbsp;
+    💡 <span class="hl">Section 80C</span>: Save ₹46,800 tax with ₹1.5L investment &nbsp;|&nbsp;
+    📊 <span class="hl">PPF Rate</span>: 7.1% p.a. fully tax-free &nbsp;|&nbsp;
+    🏦 <span class="hl">NPS 80CCD(1B)</span>: Additional ₹50,000 deduction &nbsp;|&nbsp;
+    🛡️ Health Insurance: Up to ₹25,000 deduction under Section 80D &nbsp;|&nbsp;
+    📈 ELSS: 3-year lock-in, highest tax-saving returns &nbsp;|&nbsp;
+    🏛️ <span class="hl">75 Government Schemes</span> available — check eligibility now &nbsp;&nbsp;&nbsp;
+  </span>
+</div>
+
+<!-- HERO -->
+<div style="background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 100%);border-bottom:1px solid var(--border);padding:36px 0">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center">
+    <div>
+      <p style="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">Financial Year 2024-25</p>
+      <h1 style="font-family:var(--font-display);font-size:38px;color:var(--text);line-height:1.15;letter-spacing:-.8px;margin-bottom:12px">
+        Your Complete<br><em style="color:var(--teal);font-style:normal">Financial Command</em> Center
+      </h1>
+      <p style="color:var(--text-2);font-size:14px;max-width:440px;margin-bottom:22px;line-height:1.6">Track income, optimize taxes, plan investments, manage assets, trace returns — and discover 75+ government schemes you qualify for.</p>
+      <div class="flex gap8">
+        <a href="pages/income.html" class="btn btn-primary">+ Add Transaction</a>
+        <a href="pages/tax.html" class="btn btn-ghost">Calculate Tax →</a>
+        <a href="pages/schemes.html" class="btn btn-teal">Gov Schemes 🏛️</a>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:280px">
+      <div style="background:var(--surface-3);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center">
+        <div style="font-size:20px;margin-bottom:5px">💰</div>
+        <div style="font-family:var(--font-mono);font-size:16px;color:var(--text)" id="hInc">₹0</div>
+        <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-top:3px">Income</div>
+      </div>
+      <div style="background:var(--surface-3);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center">
+        <div style="font-size:20px;margin-bottom:5px">💸</div>
+        <div style="font-family:var(--font-mono);font-size:16px;color:var(--text)" id="hExp">₹0</div>
+        <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-top:3px">Expenses</div>
+      </div>
+      <div style="background:var(--surface-3);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center">
+        <div style="font-size:20px;margin-bottom:5px">📈</div>
+        <div style="font-family:var(--font-mono);font-size:16px;color:var(--teal)" id="hSav">₹0</div>
+        <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-top:3px">Savings</div>
+      </div>
+      <div style="background:var(--surface-3);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center">
+        <div style="font-size:20px;margin-bottom:5px">🏆</div>
+        <div style="font-family:var(--font-mono);font-size:16px;color:var(--accent)" id="hScore">—</div>
+        <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-top:3px">Health Score</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- QUICK STATS -->
+  <div class="stats-grid">
+    <div class="stat-card g"><div class="stat-icon">💰</div><div class="stat-val" id="dInc">₹1,15,500</div><div class="stat-lbl">Monthly Income</div></div>
+    <div class="stat-card r"><div class="stat-icon">💸</div><div class="stat-val" id="dExp">₹51,500</div><div class="stat-lbl">Monthly Expenses</div></div>
+    <div class="stat-card t"><div class="stat-icon">🏦</div><div class="stat-val" id="dSav">₹64,000</div><div class="stat-lbl">Net Savings</div><span class="stat-badge up" id="dRate">55.4%</span></div>
+    <div class="stat-card y"><div class="stat-icon">🧾</div><div class="stat-val" id="dTax">₹1,47,304</div><div class="stat-lbl">Est. Annual Tax</div></div>
+    <div class="stat-card p"><div class="stat-icon">📦</div><div class="stat-val" id="dAssets">₹0</div><div class="stat-lbl">Total Assets</div></div>
+  </div>
+
+  <!-- MODULE GRID -->
+  <h2 style="font-family:var(--font-display);font-size:22px;color:var(--text);margin-bottom:6px">Financial Modules</h2>
+  <p style="color:var(--text-3);font-size:13px;margin-bottom:18px">All tools connected — data flows automatically across modules</p>
+  <div class="modules-grid">
+    <a href="pages/income.html" class="mod-card"><span class="mod-icon">💵</span><div class="mod-title">Income & Expenses</div><div class="mod-desc">Add transactions, auto-calculate savings, categorize with tax sections</div><span class="mod-arrow">↗</span></a>
+    <a href="pages/tax.html" class="mod-card"><span class="mod-icon">🧾</span><div class="mod-title">Tax Optimizer</div><div class="mod-desc">Old vs New regime, 80C/D/E/G deductions, return summary generator</div><span class="mod-arrow">↗</span></a>
+    <a href="pages/loans.html" class="mod-card"><span class="mod-icon">🏦</span><div class="mod-title">Loans & EMI Planner</div><div class="mod-desc">Calculate EMI, amortization schedule, compare loan options</div><span class="mod-arrow">↗</span></a>
+    <a href="pages/insurance.html" class="mod-card"><span class="mod-icon">🛡️</span><div class="mod-title">Insurance Manager</div><div class="mod-desc">Store policies, coverage ratio analysis, premium tracking</div><span class="mod-arrow">↗</span></a>
+    <a href="pages/investments.html" class="mod-card"><span class="mod-icon">📊</span><div class="mod-title">Investment Advisor</div><div class="mod-desc">Risk profiling, portfolio recommendations, growth projections</div><span class="mod-arrow">↗</span></a>
+    <a href="pages/assets.html" class="mod-card"><span class="mod-icon">🏠</span><div class="mod-title">Asset Tracker</div><div class="mod-desc">Track property, gold, equity, FDs — monitor value over time</div><span class="mod-arrow">↗</span></a>
+    <a href="pages/returns.html" class="mod-card"><span class="mod-icon">📑</span><div class="mod-title">Returns Filing Tracker</div><div class="mod-desc">ITR filing checklist, deadlines, document status, return summary</div><span class="mod-arrow">↗</span></a>
+    <a href="pages/schemes.html" class="mod-card" style="border-color:rgba(245,166,35,.25)"><span class="mod-icon">🏛️</span><div class="mod-title">Government Schemes</div><div class="mod-desc">75+ central schemes — search, filter by category, check eligibility</div><span class="mod-arrow">↗</span></a>
+    <a href="pages/health.html" class="mod-card"><span class="mod-icon">💪</span><div class="mod-title">Financial Health Score</div><div class="mod-desc">100-point score with radar chart and personalised improvement tips</div><span class="mod-arrow">↗</span></a>
+  </div>
+
+  <!-- CHARTS ROW -->
+  <div class="two-col mt24">
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title"><div class="card-icon">📊</div>Income vs Expenses</div>
+        <span class="badge badge-b">12 Months</span>
+      </div>
+      <canvas id="incExpChart" height="190"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title"><div class="card-icon">🎯</div>Expense Breakdown</div>
+        <span class="badge badge-p">By Category</span>
+      </div>
+      <canvas id="expBreakChart" height="190"></canvas>
+    </div>
+  </div>
+
+  <!-- TAX SUMMARY STRIP -->
+  <div class="card mt24">
+    <div class="card-hd">
+      <div class="card-title"><div class="card-icon">📑</div>Tax Return Quick Summary — FY 2024-25</div>
+      <a href="pages/tax.html" class="btn btn-ghost btn-sm">Full Analysis →</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px">
+      <div><div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Gross Annual Income</div><div style="font-family:var(--font-mono);font-size:18px;color:var(--text)">₹13,86,000</div></div>
+      <div><div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Total Deductions</div><div style="font-family:var(--font-mono);font-size:18px;color:var(--teal)">₹3,03,000</div></div>
+      <div><div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Taxable Income</div><div style="font-family:var(--font-mono);font-size:18px;color:var(--text)">₹10,83,000</div></div>
+      <div><div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Old Regime Tax</div><div style="font-family:var(--font-mono);font-size:18px;color:var(--red)">₹1,47,304</div></div>
+      <div><div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">New Regime Tax</div><div style="font-family:var(--font-mono);font-size:18px;color:var(--yellow)">₹1,84,600</div></div>
+      <div><div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Recommended</div><div style="font-size:17px;font-weight:700;color:var(--green)">🏆 Old Regime</div><div style="font-size:11px;color:var(--text-3);margin-top:3px">Save ₹37,296</div></div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">SmartFin Pro v3.0 — Personal Finance & Tax Optimization Platform &nbsp;|&nbsp; FY 2024-25 &nbsp;|&nbsp; All calculations indicative only</footer>
+
+<script src="js/main.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  const inc=load("income",115500),exp=load("expenses",51500),sav=load("savings",64000);
+  document.getElementById("hInc").textContent=fmt(inc);
+  document.getElementById("hExp").textContent=fmt(exp);
+  document.getElementById("hSav").textContent=fmt(sav);
+  document.getElementById("hScore").textContent=load("healthScore","—");
+  document.getElementById("dAssets").textContent=fmt(load("totalAssets",0));
+
+  // Bar chart
+  new Chart(document.getElementById("incExpChart").getContext("2d"),{
+    type:"bar",
+    data:{
+      labels:["Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar"],
+      datasets:[
+        {label:"Income",data:[115500,118000,115500,120000,115500,122000,115500,125000,115500,118000,115500,120000],backgroundColor:"rgba(79,126,255,.75)",borderRadius:5},
+        {label:"Expenses",data:[51500,55000,49000,58000,52000,54000,50000,62000,53000,51000,56000,60000],backgroundColor:"rgba(255,93,115,.65)",borderRadius:5}
+      ]
+    },
+    options:{responsive:true,plugins:{legend:{labels:{color:"#9ba8c0",font:{family:"DM Sans",size:12}}},
+      tooltip:{callbacks:{label:c=>" ₹"+c.raw.toLocaleString("en-IN")}}},
+      scales:{x:{ticks:{color:"#556070"},grid:{color:"rgba(255,255,255,.04)"}},
+        y:{ticks:{color:"#556070",callback:v=>"₹"+(v/1000)+"k"},grid:{color:"rgba(255,255,255,.04)"}}}}
+  });
+
+  // Donut
+  new Chart(document.getElementById("expBreakChart").getContext("2d"),{
+    type:"doughnut",
+    data:{
+      labels:["Housing","Food","Insurance","Loans","Transport","Bills","Investments","Other"],
+      datasets:[{data:[18000,8000,7500,4500,3000,3500,5000,2000],
+        backgroundColor:["#4f7eff","#2dd4bf","#f5c542","#ff6b6b","#a78bfa","#f97316","#22d3a5","#64748b"],
+        borderWidth:0,hoverOffset:5}]
+    },
+    options:{cutout:"68%",plugins:{
+      legend:{position:"right",labels:{color:"#9ba8c0",font:{family:"DM Sans",size:11},boxWidth:11}},
+      tooltip:{callbacks:{label:c=>" ₹"+c.raw.toLocaleString("en-IN")}}}}
+  });
+});
+</script>
+<script src='https://www.noupe.com/embed/019ce553f36f75d7899cd631db67ad1fd365.js'></script>
+</body>
+</html>

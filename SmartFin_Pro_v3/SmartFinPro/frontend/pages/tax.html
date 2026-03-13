@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartFin Pro — Tax Optimizer</title>
+<link rel="stylesheet" href="../css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<nav class="navbar">
+  <a class="brand" href="../dashboard.html"><div class="brand-icon">💰</div><span class="brand-name">SmartFin<span>Pro</span></span></a>
+  <div class="nav-links">
+    <a href="../dashboard.html">Dashboard</a><a href="income.html">Income</a>
+    <a href="tax.html" class="active">Tax</a><a href="loans.html">Loans</a>
+    <a href="insurance.html">Insurance</a><a href="investments.html">Investments</a>
+    <a href="assets.html">Assets</a><a href="returns.html">Returns</a>
+    <a href="schemes.html">Gov Schemes</a><a href="health.html">Health Score</a>
+    <button class="btn-nav-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="breadcrumb"><a href="../dashboard.html">Dashboard</a> › Tax Optimizer</div>
+  <div class="page-header">
+    <h1>🧾 Tax Optimizer — FY 2024-25</h1>
+    <p>Compare Old vs New tax regime. Input your income and deductions to find the best option.</p>
+  </div>
+
+  <div class="sidebar-l">
+    <!-- INPUT PANEL -->
+    <div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">📝</div>Income & Deductions</div></div>
+
+        <div style="font-size:10px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">INCOME</div>
+        <div class="form-grid" style="grid-template-columns:1fr">
+          <div class="fg"><label>Annual Gross Income (₹)</label><input id="tInc" type="number" placeholder="1386000" value="1386000"><div class="hint">Sum of salary, business, rental, interest income</div></div>
+        </div>
+
+        <div style="font-size:10px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:.8px;margin:14px 0 10px">DEDUCTIONS</div>
+        <div class="form-grid">
+          <div class="fg"><label>Sec 80C (max ₹1.5L)</label><input id="d80c" type="number" placeholder="150000" value="150000"><div class="hint">PPF, ELSS, LIC, EPF, NSC, tuition</div></div>
+          <div class="fg"><label>Sec 80D Health Premium</label><input id="d80d" type="number" placeholder="25000" value="25000"><div class="hint">Health insurance premium (max ₹25,000 self)</div></div>
+          <div class="fg"><label>Sec 80E Edu Loan Interest</label><input id="d80e" type="number" placeholder="54000" value="54000"><div class="hint">No upper limit — actual interest paid</div></div>
+          <div class="fg"><label>Sec 80G Donations (₹)</label><input id="d80g" type="number" placeholder="24000" value="24000"><div class="hint">50% of eligible donation amount deductible</div></div>
+          <div class="fg"><label>Sec 24B Home Loan Int. (max ₹2L)</label><input id="d24b" type="number" placeholder="0" value="0"><div class="hint">Interest on home loan (self-occupied)</div></div>
+          <div class="fg"><label>Sec 80CCD(1B) NPS (max ₹50k)</label><input id="d80ccd" type="number" placeholder="0" value="0"><div class="hint">Additional NPS contribution deduction</div></div>
+        </div>
+
+        <button class="btn btn-primary btn-full mt16" onclick="calcTax()">🧮 Calculate & Compare</button>
+        <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="autoFill()">⚡ Auto-fill from Income page</button>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div>
+      <!-- SLAB COMPARISON CHART -->
+      <div class="card mb16" id="chartCard" style="display:none">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">📊</div>Tax Comparison</div></div>
+        <canvas id="taxChart" height="170"></canvas>
+      </div>
+
+      <!-- REGIME CARDS -->
+      <div class="regime-grid" id="regimeCards" style="display:none">
+        <div class="regime-card" id="rcOld">
+          <h3>Old Regime</h3>
+          <div class="regime-tax" id="oldTax">₹0</div>
+          <div style="font-size:11px;color:var(--text-3)" id="oldEff">Effective rate: —</div>
+          <div style="font-size:11px;color:var(--text-2);margin-top:8px" id="oldTaxable">Taxable: —</div>
+        </div>
+        <div class="regime-card" id="rcNew">
+          <h3>New Regime</h3>
+          <div class="regime-tax" id="newTax">₹0</div>
+          <div style="font-size:11px;color:var(--text-3)" id="newEff">Effective rate: —</div>
+          <div style="font-size:11px;color:var(--text-2);margin-top:8px" id="newTaxable">Taxable: —</div>
+        </div>
+      </div>
+
+      <!-- RECOMMENDATION -->
+      <div id="recBox" class="result-box ok" style="margin-top:14px"></div>
+
+      <!-- DEDUCTIONS BREAKDOWN -->
+      <div class="card mt16" id="dedCard" style="display:none">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">🔖</div>Deduction Breakdown</div></div>
+        <div class="ded-list" id="dedBreakdown"></div>
+      </div>
+
+      <!-- SLAB BREAKDOWN -->
+      <div class="card mt16" id="slabCard" style="display:none">
+        <div class="card-hd">
+          <div class="card-title"><div class="card-icon">📋</div>Slab-wise Tax Calculation</div>
+          <select id="slabRegime" onchange="renderSlabs()" style="background:var(--surface-3);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:4px 8px;font-size:12px">
+            <option value="old">Old Regime</option><option value="new">New Regime</option>
+          </select>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Slab</th><th>Range</th><th>Rate</th><th>Taxable in Slab</th><th>Tax</th></tr></thead>
+          <tbody id="slabTable"></tbody></table>
+        </div>
+      </div>
+
+      <!-- RETURN SUMMARY -->
+      <div class="card mt16" id="retCard" style="display:none">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">📑</div>ITR Return Summary</div>
+          <button onclick="printReturn()" class="btn btn-ghost btn-sm">🖨️ Print</button>
+        </div>
+        <div id="returnSummary"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">SmartFin Pro v3.0 — FY 2024-25 | Calculations are indicative</footer>
+<script src="../js/main.js"></script>
+<script>
+let lastResult=null;
+let taxChart=null;
+
+const OLD_SLABS=[
+  {from:0,to:250000,rate:0,label:"₹0 – ₹2.5L"},
+  {from:250000,to:500000,rate:0.05,label:"₹2.5L – ₹5L"},
+  {from:500000,to:1000000,rate:0.20,label:"₹5L – ₹10L"},
+  {from:1000000,to:Infinity,rate:0.30,label:"Above ₹10L"}
+];
+const NEW_SLABS=[
+  {from:0,to:300000,rate:0,label:"₹0 – ₹3L"},
+  {from:300000,to:600000,rate:0.05,label:"₹3L – ₹6L"},
+  {from:600000,to:900000,rate:0.10,label:"₹6L – ₹9L"},
+  {from:900000,to:1200000,rate:0.15,label:"₹9L – ₹12L"},
+  {from:1200000,to:1500000,rate:0.20,label:"₹12L – ₹15L"},
+  {from:1500000,to:Infinity,rate:0.30,label:"Above ₹15L"}
+];
+
+function calcSlabTax(income,slabs){
+  let tax=0;
+  const breakdown=[];
+  slabs.forEach(s=>{
+    const taxable=Math.max(0,Math.min(income,s.to)-s.from);
+    const t=taxable*s.rate;
+    breakdown.push({label:s.label,rate:s.rate,taxable,tax:t});
+    tax+=t;
+  });
+  return {tax,breakdown};
+}
+
+function autoFill(){
+  const inc=load("income",0);
+  if(inc>0){document.getElementById("tInc").value=inc*12;}
+  const el=load("expenseList",[]);
+  const secSum={};
+  el.forEach(x=>{if(x.sec)secSum[x.sec]=(secSum[x.sec]||0)+x.amt*12;});
+  if(secSum["80C"])document.getElementById("d80c").value=Math.min(secSum["80C"],150000);
+  if(secSum["80D"])document.getElementById("d80d").value=Math.min(secSum["80D"],25000);
+  if(secSum["80E"])document.getElementById("d80e").value=secSum["80E"]||0;
+  if(secSum["80G"])document.getElementById("d80g").value=secSum["80G"]||0;
+  calcTax();
+}
+
+function calcTax(){
+  const gross=parseFloat(document.getElementById("tInc").value)||0;
+  const c80c=Math.min(parseFloat(document.getElementById("d80c").value)||0,150000);
+  const c80d=Math.min(parseFloat(document.getElementById("d80d").value)||0,25000);
+  const c80e=parseFloat(document.getElementById("d80e").value)||0;
+  const c80g=(parseFloat(document.getElementById("d80g").value)||0)*0.5;
+  const c24b=Math.min(parseFloat(document.getElementById("d24b").value)||0,200000);
+  const c80ccd=Math.min(parseFloat(document.getElementById("d80ccd").value)||0,50000);
+  const stdOld=50000,stdNew=75000;
+
+  const totalDedOld=stdOld+c80c+c80d+c80e+c80g+c24b+c80ccd;
+  const totalDedNew=stdNew;
+
+  const taxableOld=Math.max(0,gross-totalDedOld);
+  const taxableNew=Math.max(0,gross-totalDedNew);
+
+  const oldCalc=calcSlabTax(taxableOld,OLD_SLABS);
+  let oldTax=(oldCalc.tax*1.04); // +4% cess
+  // 87A rebate for old: if taxable ≤5L, tax=0
+  if(taxableOld<=500000)oldTax=0;
+
+  const newCalc=calcSlabTax(taxableNew,NEW_SLABS);
+  let newTax=(newCalc.tax*1.04);
+  if(taxableNew<=700000)newTax=0; // 87A rebate
+
+  const saves=Math.abs(oldTax-newTax);
+  const bestOld=oldTax<=newTax;
+
+  lastResult={gross,taxableOld,taxableNew,oldTax,newTax,bestOld,
+    totalDedOld,c80c,c80d,c80e,c80g,c24b,c80ccd,stdOld,
+    oldCalcBreakdown:oldCalc.breakdown,newCalcBreakdown:newCalc.breakdown};
+
+  // Show elements
+  ["chartCard","regimeCards","dedCard","slabCard","retCard"].forEach(id=>document.getElementById(id).style.display="block");
+
+  // Regime cards
+  document.getElementById("oldTax").textContent=fmt(oldTax);
+  document.getElementById("oldEff").textContent="Effective: "+pct(gross>0?oldTax/gross*100:0);
+  document.getElementById("oldTaxable").textContent="Taxable: "+fmt(taxableOld);
+  document.getElementById("newTax").textContent=fmt(newTax);
+  document.getElementById("newEff").textContent="Effective: "+pct(gross>0?newTax/gross*100:0);
+  document.getElementById("newTaxable").textContent="Taxable: "+fmt(taxableNew);
+
+  document.getElementById("rcOld").className="regime-card"+(bestOld?" best":"");
+  document.getElementById("rcNew").className="regime-card"+(!bestOld?" best":"");
+
+  // Recommendation
+  showResult("recBox",`
+    <div style="text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">${bestOld?"🏆":"✨"}</div>
+      <div style="font-family:var(--font-display);font-size:20px;color:var(--green);margin-bottom:6px">
+        ${bestOld?"Old Regime Wins!":"New Regime Wins!"}
+      </div>
+      <div style="color:var(--text-2);font-size:13px">Save <strong style="color:var(--green);font-family:var(--font-mono)">${fmt(saves)}</strong> by choosing <strong>${bestOld?"Old":"New"}</strong> Regime</div>
+      <div style="color:var(--text-3);font-size:11.5px;margin-top:5px">Monthly TDS: ${fmt(Math.min(oldTax,newTax)/12)}</div>
+    </div>`,"ok");
+
+  // Chart
+  if(taxChart)taxChart.destroy();
+  taxChart=new Chart(document.getElementById("taxChart").getContext("2d"),{
+    type:"bar",
+    data:{labels:["Gross Income","Old: Deductions","Old: Taxable","Old Tax","New: Std Ded","New: Taxable","New Tax"],
+      datasets:[{data:[gross,totalDedOld,taxableOld,oldTax,stdNew,taxableNew,newTax],
+        backgroundColor:["#4f7eff","#22d3a5","#f5c542","#ff5d73","#22d3a5","#f5c542","#a78bfa"],
+        borderRadius:5}]},
+    options:{indexAxis:"y",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>" "+fmt(c.raw)}}},
+      scales:{x:{ticks:{color:"#556070",callback:v=>"₹"+(v/100000)+"L"},grid:{color:"rgba(255,255,255,.04)"}},
+        y:{ticks:{color:"#9ba8c0",font:{size:11}}}}}
+  });
+
+  // Deductions breakdown
+  document.getElementById("dedBreakdown").innerHTML=[
+    {sec:"Standard Deduction",amt:stdOld,cap:50000,note:"Auto-applied in Old Regime"},
+    {sec:"80C",amt:c80c,cap:150000,note:"PPF / ELSS / LIC / EPF"},
+    {sec:"80D",amt:c80d,cap:25000,note:"Health insurance premium"},
+    {sec:"80E",amt:c80e,cap:"No limit",note:"Education loan interest"},
+    {sec:"80G",amt:c80g,cap:"50% of donation",note:"Charitable donations"},
+    {sec:"24B",amt:c24b,cap:200000,note:"Home loan interest"},
+    {sec:"80CCD",amt:c80ccd,cap:50000,note:"Additional NPS contribution"}
+  ].filter(d=>d.amt>0).map(d=>`
+    <div class="ded-item">
+      <span class="ded-sec">${d.sec}</span>
+      <span class="ded-desc">${d.note}<br><span style="font-size:10px;color:var(--text-3)">Cap: ${typeof d.cap==="number"?fmt(d.cap):d.cap}</span></span>
+      <span class="ded-amt">${fmt(d.amt)}</span>
+    </div>`).join("")+
+    `<div class="ded-item" style="border-top:2px solid var(--border)">
+      <span class="ded-sec" style="color:var(--green)">TOTAL</span>
+      <span class="ded-desc">Total Old Regime Deductions</span>
+      <span class="ded-amt" style="font-size:15px">${fmt(totalDedOld)}</span>
+    </div>`;
+
+  renderSlabs();
+  renderReturn();
+}
+
+function renderSlabs(){
+  const regime=document.getElementById("slabRegime").value;
+  const bd=regime==="old"?lastResult.oldCalcBreakdown:lastResult.newCalcBreakdown;
+  if(!bd)return;
+  let cumTax=0;
+  document.getElementById("slabTable").innerHTML=bd.map(s=>{
+    cumTax+=s.tax;
+    return `<tr>
+      <td>${s.label}</td><td class="td-num">${fmt(s.taxable)}</td>
+      <td><span class="badge badge-b">${(s.rate*100).toFixed(0)}%</span></td>
+      <td class="td-num">${fmt(s.taxable)}</td>
+      <td class="td-num td-neg">${fmt(s.tax)}</td>
+    </tr>`;
+  }).join("")+`
+    <tr style="background:var(--surface-3)">
+      <td colspan="4" style="font-weight:700;color:var(--text)">Sub-total Tax + 4% Cess</td>
+      <td class="td-num td-neg" style="font-weight:700">${fmt(cumTax*1.04)}</td>
+    </tr>`;
+}
+
+function renderReturn(){
+  if(!lastResult)return;
+  const r=lastResult;
+  const bestTax=r.bestOld?r.oldTax:r.newTax;
+  const advanceTax=Math.max(0,bestTax-(bestTax*0.1)); // approx
+  document.getElementById("returnSummary").innerHTML=`
+    <div class="ded-list">
+      <div class="ded-item"><span class="ded-sec" style="color:var(--teal)">GROSS</span><span class="ded-desc">Gross Annual Income</span><span class="ded-amt">${fmt(r.gross)}</span></div>
+      <div class="ded-item"><span class="ded-sec">DED</span><span class="ded-desc">Total Deductions (${r.bestOld?"Old":"New"} Regime)</span><span class="ded-amt" style="color:var(--green)">- ${fmt(r.bestOld?r.totalDedOld:75000)}</span></div>
+      <div class="ded-item"><span class="ded-sec" style="color:var(--yellow)">TXBL</span><span class="ded-desc">Taxable Income</span><span class="ded-amt">${fmt(r.bestOld?r.taxableOld:r.taxableNew)}</span></div>
+      <div class="ded-item"><span class="ded-sec" style="color:var(--red)">TAX</span><span class="ded-desc">Total Tax Payable (incl. 4% cess)</span><span class="ded-amt" style="color:var(--red)">${fmt(bestTax)}</span></div>
+      <div class="ded-item"><span class="ded-sec" style="color:var(--purple)">TDS</span><span class="ded-desc">Est. Monthly TDS deduction</span><span class="ded-amt">${fmt(bestTax/12)}</span></div>
+      <div class="ded-item"><span class="ded-sec" style="color:var(--green)">RGNM</span><span class="ded-desc" style="font-weight:700">✅ Recommended: ${r.bestOld?"OLD REGIME":"NEW REGIME"}</span><span class="ded-amt" style="color:var(--green)">Save ${fmt(Math.abs(r.oldTax-r.newTax))}</span></div>
+    </div>`;
+}
+
+function printReturn(){
+  const w=window.open("","_blank");
+  w.document.write(`<html><head><title>Tax Return Summary</title></head><body>
+    <h2>SmartFin Pro — Tax Return Summary FY 2024-25</h2>
+    ${document.getElementById("returnSummary").innerHTML}
+    <p style="margin-top:20px;font-size:12px;color:#666">Generated on ${new Date().toLocaleDateString("en-IN")} — Indicative only</p>
+  </body></html>`);
+  w.print();
+}
+
+autoFill();
+</script>
+</body>
+</html>

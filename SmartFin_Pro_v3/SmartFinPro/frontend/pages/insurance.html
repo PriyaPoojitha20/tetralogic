@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartFin Pro — Insurance</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav class="navbar">
+  <a class="brand" href="../dashboard.html"><div class="brand-icon">💰</div><span class="brand-name">SmartFin<span>Pro</span></span></a>
+  <div class="nav-links">
+    <a href="../dashboard.html">Dashboard</a><a href="income.html">Income</a>
+    <a href="tax.html">Tax</a><a href="loans.html">Loans</a>
+    <a href="insurance.html" class="active">Insurance</a><a href="investments.html">Investments</a>
+    <a href="assets.html">Assets</a><a href="returns.html">Returns</a>
+    <a href="schemes.html">Gov Schemes</a><a href="health.html">Health Score</a>
+    <button class="btn-nav-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="breadcrumb"><a href="../dashboard.html">Dashboard</a> › Insurance</div>
+  <div class="page-header">
+    <h1>🛡️ Insurance Policy Manager</h1>
+    <p>Track all policies, premiums, coverage ratios and government-backed insurance schemes you qualify for.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card t"><div class="stat-icon">🛡️</div><div class="stat-val" id="sTotalCov">₹0</div><div class="stat-lbl">Total Coverage</div></div>
+    <div class="stat-card y"><div class="stat-icon">💸</div><div class="stat-val" id="sTotalPrem">₹0/yr</div><div class="stat-lbl">Annual Premium</div></div>
+    <div class="stat-card g"><div class="stat-icon">📋</div><div class="stat-val" id="sPolicies">0</div><div class="stat-lbl">Active Policies</div></div>
+    <div class="stat-card p"><div class="stat-icon">📊</div><div class="stat-val" id="sCovRatio">0×</div><div class="stat-lbl">Coverage Ratio</div></div>
+    <div class="stat-card r"><div class="stat-icon">🏷️</div><div class="stat-val" id="sTaxSav">₹0</div><div class="stat-lbl">Tax Deductible (80D)</div></div>
+  </div>
+
+  <div class="sidebar-l">
+    <!-- ADD POLICY FORM -->
+    <div>
+      <div class="card mb16">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">➕</div>Add Policy</div></div>
+        <div class="form-grid" style="grid-template-columns:1fr">
+          <div class="fg"><label>Policy Type</label>
+            <select id="pType">
+              <option>Term Life</option><option>Endowment Life</option><option>ULiP</option>
+              <option>Health / Mediclaim</option><option>Critical Illness</option>
+              <option>Vehicle (Comprehensive)</option><option>Vehicle (Third Party)</option>
+              <option>Home / Property</option><option>Travel</option><option>Personal Accident</option>
+            </select>
+          </div>
+          <div class="fg"><label>Insurer / Provider</label><input id="pInsurer" placeholder="e.g. LIC, Star Health, HDFC Ergo"></div>
+          <div class="fg"><label>Policy Number</label><input id="pNum" placeholder="Optional"></div>
+          <div class="fg"><label>Sum Assured / Coverage (₹)</label><input id="pCov" type="number" placeholder="5000000"></div>
+          <div class="fg"><label>Annual Premium (₹)</label><input id="pPrem" type="number" placeholder="12000"></div>
+          <div class="fg"><label>Members Covered</label><input id="pMembers" type="number" placeholder="1" value="1"></div>
+          <div class="fg"><label>Policy Maturity / Renewal Date</label><input id="pMaturity" type="date"></div>
+          <div class="fg"><label>Tax Section</label>
+            <select id="pSec"><option value="">None</option><option>80C</option><option>80D</option><option>80CCC</option></select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="addPolicy()">+ Add Policy</button>
+      </div>
+
+      <!-- ADEQUACY CHECKER -->
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">✅</div>Coverage Adequacy Check</div></div>
+        <div class="fg mb16"><label>Annual Income (₹)</label><input id="aIncome" type="number" placeholder="1386000" value=""></div>
+        <button class="btn btn-ghost btn-full" onclick="checkAdequacy()">Check Adequacy →</button>
+        <div id="adequacyResult"></div>
+      </div>
+    </div>
+
+    <!-- POLICIES LIST + GUIDES -->
+    <div>
+      <!-- POLICIES -->
+      <div id="policiesList"></div>
+
+      <!-- GOV SCHEMES LINK -->
+      <div class="card mt16" style="border-color:rgba(245,166,35,.25)">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">🏛️</div>Government Insurance Schemes</div>
+          <a href="schemes.html" class="btn btn-ghost btn-sm">View All →</a>
+        </div>
+        <div class="ded-list">
+          <div class="ded-item"><span class="ded-sec" style="color:var(--teal)">PMJJBY</span><span class="ded-desc">₹2L life cover at just ₹436/year — age 18–50</span><span class="ded-amt" style="color:var(--green)">₹436/yr</span></div>
+          <div class="ded-item"><span class="ded-sec" style="color:var(--yellow)">PMSBY</span><span class="ded-desc">₹2L accidental death/disability at ₹20/year</span><span class="ded-amt" style="color:var(--green)">₹20/yr</span></div>
+          <div class="ded-item"><span class="ded-sec" style="color:var(--red)">PMJAY</span><span class="ded-desc">₹5L health cover per family — for eligible BPL families</span><span class="ded-amt" style="color:var(--green)">FREE</span></div>
+          <div class="ded-item"><span class="ded-sec" style="color:var(--purple)">AABY</span><span class="ded-desc">₹30k–₹75k cover for rural landless poor, includes children scholarship</span><span class="ded-amt" style="color:var(--green)">FREE</span></div>
+          <div class="ded-item"><span class="ded-sec">ESIC</span><span class="ded-desc">Full medical care + benefits for organised sector workers ≤₹21k/mo salary</span><span class="ded-amt" style="color:var(--teal)">Employer</span></div>
+        </div>
+      </div>
+
+      <!-- COVERAGE GUIDE -->
+      <div class="card mt16">
+        <div class="card-hd"><div class="card-title"><div class="card-icon">📖</div>Insurance Adequacy Guide</div></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Type</th><th>Minimum</th><th>Ideal</th><th>Tax Benefit</th></tr></thead>
+            <tbody>
+              <tr><td>Term Life</td><td>10× annual income</td><td>15–20× income</td><td class="td-num" style="color:var(--teal)">80C</td></tr>
+              <tr><td>Health</td><td>₹5L per person</td><td>₹10–15L floater</td><td class="td-num" style="color:var(--teal)">80D ₹25k</td></tr>
+              <tr><td>Critical Illness</td><td>3× annual income</td><td>5× income</td><td class="td-num" style="color:var(--teal)">80D included</td></tr>
+              <tr><td>Personal Accident</td><td>5× annual income</td><td>10× income</td><td style="color:var(--text-3)">—</td></tr>
+              <tr><td>Vehicle</td><td>Third-party (mandatory)</td><td>Comprehensive</td><td style="color:var(--text-3)">—</td></tr>
+              <tr><td>Home</td><td>Replacement value</td><td>Full market value</td><td style="color:var(--text-3)">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">SmartFin Pro v3.0 — FY 2024-25</footer>
+<script src="../js/main.js"></script>
+<script>
+let policies=load("policyList",[]);
+
+function addPolicy(){
+  const type=document.getElementById("pType").value;
+  const insurer=document.getElementById("pInsurer").value.trim()||"—";
+  const pNum=document.getElementById("pNum").value.trim()||"—";
+  const cov=parseFloat(document.getElementById("pCov").value)||0;
+  const prem=parseFloat(document.getElementById("pPrem").value)||0;
+  const members=parseInt(document.getElementById("pMembers").value)||1;
+  const maturity=document.getElementById("pMaturity").value||"—";
+  const sec=document.getElementById("pSec").value;
+  if(!cov||!prem)return alert("Enter coverage and premium.");
+  policies.push({type,insurer,pNum,cov,prem,members,maturity,sec,id:Date.now()});
+  save("policyList",policies);
+  document.getElementById("pInsurer").value="";
+  document.getElementById("pCov").value="";
+  document.getElementById("pPrem").value="";
+  render();
+}
+
+function delPolicy(id){policies=policies.filter(p=>p.id!==id);save("policyList",policies);render();}
+
+function checkAdequacy(){
+  const inc=parseFloat(document.getElementById("aIncome").value)||load("income",0)*12;
+  if(!inc)return;
+  const lifeCov=policies.filter(p=>p.type.includes("Life")||p.type.includes("Term")).reduce((s,p)=>s+p.cov,0);
+  const healthCov=policies.filter(p=>p.type.includes("Health")||p.type.includes("Mediclaim")||p.type.includes("Critical")).reduce((s,p)=>s+p.cov,0);
+  const lifeOk=lifeCov>=inc*10,lifeIdeal=lifeCov>=inc*15;
+  const healthOk=healthCov>=500000,healthIdeal=healthCov>=1000000;
+
+  document.getElementById("adequacyResult").innerHTML=`
+    <div class="ded-list" style="margin-top:12px">
+      <div class="ded-item">
+        <span class="ded-sec" style="color:${lifeOk?"var(--green)":"var(--red)"}">${lifeOk?"✅":"❌"}</span>
+        <span class="ded-desc">Life Coverage: ${fmt(lifeCov)} (Need min ${fmt(inc*10)})<br>
+          <span style="font-size:10px;color:var(--text-3)">${lifeIdeal?"Great! Exceeds ideal target.":lifeOk?"Good. Consider increasing to "+fmt(inc*15)+"." :"Shortfall of "+fmt(inc*10-lifeCov)+". Add term insurance."}</span>
+        </span>
+      </div>
+      <div class="ded-item">
+        <span class="ded-sec" style="color:${healthOk?"var(--green)":"var(--red)"}">${healthOk?"✅":"❌"}</span>
+        <span class="ded-desc">Health Coverage: ${fmt(healthCov)} (Need min ₹5L)<br>
+          <span style="font-size:10px;color:var(--text-3)">${healthIdeal?"Excellent cover.":healthOk?"Consider increasing to ₹10-15L family floater.":"Low. Get at least ₹5L health policy."}</span>
+        </span>
+      </div>
+      <div class="ded-item">
+        <span class="ded-sec" style="color:var(--teal)">TIP</span>
+        <span class="ded-desc">Add PMJJBY (₹436/yr) + PMSBY (₹20/yr) for extra ₹4L low-cost government cover.</span>
+      </div>
+    </div>`;
+}
+
+function daysUntil(dateStr){
+  if(dateStr==="—")return null;
+  const diff=(new Date(dateStr)-new Date())/(1000*60*60*24);
+  return Math.floor(diff);
+}
+
+function render(){
+  const totalCov=policies.reduce((s,p)=>s+p.cov,0);
+  const totalPrem=policies.reduce((s,p)=>s+p.prem,0);
+  const taxDed80d=policies.filter(p=>p.sec==="80D").reduce((s,p)=>s+p.prem,0);
+  const income=load("income",0)*12;
+
+  document.getElementById("sTotalCov").textContent=fmt(totalCov);
+  document.getElementById("sTotalPrem").textContent=fmt(totalPrem)+"/yr";
+  document.getElementById("sPolicies").textContent=policies.length;
+  document.getElementById("sCovRatio").textContent=income>0?(totalCov/income).toFixed(1)+"×":"—";
+  document.getElementById("sTaxSav").textContent=fmt(Math.min(taxDed80d,25000));
+
+  const container=document.getElementById("policiesList");
+  if(!policies.length){
+    container.innerHTML=`<div class="card"><div style="text-align:center;padding:32px;color:var(--text-3)">No policies added yet. Add your first policy.</div></div>`;
+    return;
+  }
+
+  container.innerHTML=policies.map(p=>{
+    const days=daysUntil(p.maturity);
+    const expireClass=days!==null?(days<30?"badge-r":days<90?"badge-y":"badge-g"):"badge-b";
+    const expireLabel=days!==null?(days<0?"EXPIRED":days<30?"Expires in "+days+"d":days<90?"Expires soon":p.maturity):"—";
+    return `<div class="ins-card">
+      <div class="ins-card-hd">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--text)">${p.type}</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:2px">${p.insurer} ${p.pNum!=="—"?"· #"+p.pNum:""}</div>
+        </div>
+        <div class="flex gap8 fac">
+          ${p.sec?`<span class="badge badge-b">${p.sec}</span>`:""}
+          <span class="badge ${expireClass}">${expireLabel}</span>
+          <button onclick="delPolicy(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:18px">×</button>
+        </div>
+      </div>
+      <div class="ins-card-stats">
+        <div><div class="isl">Coverage</div><div class="isv" style="color:var(--teal)">${fmt(p.cov)}</div></div>
+        <div><div class="isl">Premium/yr</div><div class="isv">${fmt(p.prem)}</div></div>
+        <div><div class="isl">Members</div><div class="isv">${p.members}</div></div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// Sample policies
+if(!policies.length){
+  policies=[
+    {type:"Term Life",insurer:"LIC",pNum:"—",cov:5000000,prem:12000,members:1,maturity:"2049-01-01",sec:"80C",id:1},
+    {type:"Health / Mediclaim",insurer:"Star Health",pNum:"—",cov:500000,prem:18000,members:4,maturity:"2025-04-01",sec:"80D",id:2},
+    {type:"Vehicle (Comprehensive)",insurer:"HDFC Ergo",pNum:"—",cov:800000,prem:8500,members:1,maturity:"2025-03-15",sec:"",id:3}
+  ];
+  save("policyList",policies);
+}
+document.getElementById("aIncome").value=load("income",115500)*12;
+render();
+</script>
+</body>
+</html>
